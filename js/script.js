@@ -488,51 +488,82 @@ function checkboxes_clear (checkboxes) {
     });
 }
 
+function new_pathogen_block(value, type_picture, material, research, group, probs = 1, type_input = 'checkbox') {
+    let pathogen_elem = document.createElement('div');
+    pathogen_elem.className = 'pathogen pathogen_not_corresponds';
+    pathogen_elem.id = value + ' ' + type_picture;
+    pathogen_elem.title = 'Нажмите, чтобы подтвердить соответсвие клинической картине';
+    pathogen_elem.setAttribute('data-corresponds', 0);
+    let pathogen_name = document.createTextNode(value);
+    pathogen_elem.append(pathogen_name);
+    pathogen_elem.setAttribute('data-material', material);
+    pathogen_elem.setAttribute('data-type', research);
+    pathogen_elem.setAttribute('data-group', group);
+    if (type_input == 'radio') {
+        pathogen_elem.setAttribute('data-probs', probs);
+    }
+
+    pathogen_elem.addEventListener('click', function () {
+
+        if (this.classList.contains('pathogen_not_corresponds')) {
+            this.classList.remove('pathogen_not_corresponds');
+            this.classList.add('pathogen_corresponds');
+            this.title = 'Нажмите, чтобы убрать соответсвие клинической картине';
+            this.setAttribute('data-corresponds', 1);
+        } else {
+            this.classList.remove('pathogen_corresponds');
+            this.classList.add('pathogen_not_corresponds');
+            this.title = 'Нажмите, чтобы подтвердить соответсвие клинической картине';
+            this.setAttribute('data-corresponds', 0);
+        }
+    });
+
+    return pathogen_elem;
+}
+
 //работа с чекбоксами
 const groups_item = document.querySelectorAll(".pathogen__group-item"); //берем все группы
 groups_item.forEach((group_item) => {
-    
-    const checkboxes = group_item.querySelectorAll('input[type="checkbox"]');//находим в группе чекбоксы
-    checkboxes.forEach((checkbox) => {
 
-        //для каждого чекюокса вешаем событие изменения
-        checkbox.addEventListener('change', function () {
-            //если отмечаем чекбокс, то открываем блоки клиническую и хирургичекую картин, создаем элемент со значением чекбокса и помещаем этот элемент в эти блоки
+    const radios = group_item.querySelectorAll('input[type="radio"]');
+
+    radios.forEach((radio) => {
+        radio.addEventListener('change', function () {
+            console.log(this.value);
             if (this.checked) {
-
                 if (getComputedStyle(clinic).display == "none") {
                     fadeIn(clinic,500);
                     fadeIn(hirurg,500);
                 }
 
-                function new_pathogen_block(value, type) {
-                    let pathogen_elem = document.createElement('div');
-                    pathogen_elem.className = 'pathogen';
-                    pathogen_elem.id = value + ' ' + type;
-                    let pathogen_name = document.createTextNode(value);
-                    pathogen_elem.append(pathogen_name);
+                if (!contains(array_pathogen, this.value)) {
+                    array_pathogen.push(this.value);
+                    pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
+                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
+                } else {
+                    document.getElementById(this.value + ' ' + 'clinic').setAttribute('data-probs', this.getAttribute('data-probs'));
+                    document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
+                }
+            }
+        });
+    });
 
-                    pathogen_elem.addEventListener('click', function () {
-                        let checkboxes_named_elem = document.querySelectorAll('input[value="' + value + '"]');
-                        checkboxes_clear(checkboxes_named_elem);
-                        this.remove();
-
-                        if (type == 'clinic') {
-                            document.getElementById(value + ' hirurg').remove();
-                        } else {
-                            document.getElementById(value + ' clinic').remove();
-                        }
-
-                        array_pathogen.splice(array_pathogen.indexOf(checkbox.value), 1);
-                    });
-
-                    return pathogen_elem;
+    
+    const checkboxes = group_item.querySelectorAll('input[type="checkbox"]');//находим в группе чекбоксы
+    checkboxes.forEach((checkbox) => {
+        //для каждого чекюокса вешаем событие изменения
+        checkbox.addEventListener('change', function () {
+            //если отмечаем чекбокс, то открываем блоки клиническую и хирургичекую картин, создаем элемент со значением чекбокса и помещаем этот элемент в эти блоки
+            if (this.checked) {
+                if (getComputedStyle(clinic).display == "none") {
+                    fadeIn(clinic,500);
+                    fadeIn(hirurg,500);
                 }
 
                 if (!contains(array_pathogen, this.value)) {
                     array_pathogen.push(this.value);
-                    pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic'));
-                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg'));
+                    pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
+                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
                 }
                 
             } else {
@@ -576,6 +607,7 @@ groups_item.forEach((group_item) => {
     });
 });
 
+
 const add_btns = document.querySelectorAll('.add_pathogen_btn');
 add_btns.forEach((btn) => {
     btn.addEventListener('click', function () {
@@ -589,27 +621,82 @@ add_btns.forEach((btn) => {
         input = parent.querySelector('input');
         new_pathogen = input.value;
 
-        function new_pathogen_block(value, type) {
-            let pathogen_elem = document.createElement('div');
-            pathogen_elem.className = 'pathogen';
-            pathogen_elem.id = value + ' ' + type;
-            let pathogen_name = document.createTextNode(value);
-            pathogen_elem.append(pathogen_name);
+        if (!contains(array_pathogen, new_pathogen)) {
+            array_pathogen.push(new_pathogen);
+            pathogens__check_clinic.append(new_pathogen_block(new_pathogen, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'),1,this.getAttribute('data-type-input')));
+            pathogens__check_hirurg.append(new_pathogen_block(new_pathogen, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'),1,this.getAttribute('data-type-input')));
+        }
+        // parent.parentNode.append(new_pathogen_block(new_pathogen, 'clinic'));
+        if (this.getAttribute('data-type-input') == 'radio') {
+            let lvl = document.querySelector('.example_radio');
+            let new_lvl = lvl.cloneNode(true);
+            let new_inputs = new_lvl.querySelectorAll('input');
+            let type = new_lvl.querySelector('.types');
+            new_inputs.forEach((new_input) => {
+                new_input.value = new_pathogen;
+                new_input.setAttribute('data-material', this.getAttribute('data-material'));
+                new_input.setAttribute('data-type', this.getAttribute('data-type'));
+                new_input.setAttribute('data-group', this.getAttribute('data-group'));
 
-            pathogen_elem.addEventListener('click', function () {
-                this.remove();
+                new_input.addEventListener('change', function () {
+                    console.log(this.value);
+                    if (this.checked) {
+                        if (getComputedStyle(clinic).display == "none") {
+                            fadeIn(clinic,500);
+                            fadeIn(hirurg,500);
+                        }
 
-                if (type == 'clinic') {
-                    document.getElementById(value + ' hirurg').remove();
+                        if (!contains(array_pathogen, this.value)) {
+                            array_pathogen.push(this.value);
+                            pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
+                            pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
+                        } else {
+                            document.getElementById(this.value + ' ' + 'clinic').setAttribute('data-probs', this.getAttribute('data-probs'));
+                            document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
+                        }
+                    }
+                });
+            });
+            new_inputs[0].checked = true;
+            new_inputs[0].setAttribute('data-probs', 1);
+            new_inputs[1].setAttribute('data-probs', 2);
+            type.textContent = new_pathogen;
+            new_lvl.classList.add('pathogen__item_vis');
+            parent.parentNode.append(new_lvl);
+        } else {
+            let lvl = document.querySelector('.for_js');
+            let new_lvl = lvl.cloneNode(true);
+            let new_input = new_lvl.querySelector('input');
+            let type = new_lvl.querySelector('.types');
+            new_input.value = new_pathogen;
+            new_input.checked = true;
+            new_input.setAttribute('data-material', this.getAttribute('data-material'));
+            new_input.setAttribute('data-type', this.getAttribute('data-type'));
+            new_input.setAttribute('data-group', this.getAttribute('data-group'));
+            type.textContent = new_pathogen;
+            new_lvl.classList.add('pathogen__item_vis');
+
+            new_input.addEventListener('change', function () {
+                //если отмечаем чекбокс, то открываем блоки клиническую и хирургичекую картин, создаем элемент со значением чекбокса и помещаем этот элемент в эти блоки
+                if (this.checked) {
+                    if (!contains(array_pathogen, this.value)) {
+                        array_pathogen.push(this.value);
+                        pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
+                        pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
+                    }
+                    
                 } else {
-                    document.getElementById(value + ' clinic').remove();
+                    let checkboxes_named = document.querySelectorAll('input[value="' + this.value + '"]'); //массив всех чекбоксов с одинаковым значением
+                    //если убираем отметку, то проверяем остались ли отмеченные чекбоксы с одинаковым значением, если нет, то удаляем из картин элемент
+                    if (!checkboxes_check(checkboxes_named)) {
+                        array_pathogen.splice(array_pathogen.indexOf(new_input.value), 1);
+                        document.getElementById(this.value + ' clinic').remove();
+                        document.getElementById(this.value + ' hirurg').remove();
+                        // checkboxes_clear(checkboxes_named);
+                    }
                 }
             });
-
-            return pathogen_elem;
+            parent.parentNode.append(new_lvl);
         }
-
-        pathogens__check_clinic.append(new_pathogen_block(new_pathogen, 'clinic'));
-        pathogens__check_hirurg.append(new_pathogen_block(new_pathogen, 'hirurg'));
     });
 });

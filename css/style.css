@@ -507,7 +507,7 @@ input[type="radio"] {
 .pcr {
     width: 50%;
     padding: 5px;
-    border-right: 1px solid black;
+    padding-left: 15px;
 }
 
 .issledovanie__title {
@@ -519,7 +519,9 @@ input[type="radio"] {
 .mkbi {
     width: 50%;
     padding: 5px;
-    padding-left: 15px;
+    padding-left: 5px;
+    padding-right: 15px;
+    border-right: 1px solid black;
 }
 
 /* .check {
@@ -534,6 +536,13 @@ input[type="radio"] {
 
 .pathogens {
     width: 60%;
+}
+
+.probs_level {
+    width: 22%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .level {
@@ -560,6 +569,10 @@ input[type="radio"] {
     display: none;
 }
 
+.pathogen__item_visible {
+    display: flex;
+}
+
 .pathogen__item_active {
     display: flex;
 }
@@ -577,11 +590,26 @@ input[type='checkbox'] {
 .pathogen {
     margin: 0 10px;
     font-style: italic;
+    padding: 5px;
+    border: 1px solid white;
+    border-radius: 10px;
 }
 
 .pathogen:hover {
-    background-color: #f9b2b2;
+    /* background-color: #ffc67c; */
     cursor: pointer;
+    border: 1px solid black;
+
+}
+
+.pathogen_corresponds {
+    background-color: #b9f9b2;
+    border: 1px solid #6fc765;
+}
+
+.pathogen_not_corresponds {
+    background-color: #f9b2b2;
+    border: 1px solid #c06060;
 }
 
 .blood,  .tkan,  .clinic,  .hirurg {
@@ -635,4 +663,66 @@ input[type='checkbox'] {
 
 .corresponds {
     background-color: #a1ffa1;
+}
+
+.ie__title {
+    font-size: 25px;
+    text-align: center;
+}
+
+.level__title {
+    font-size: 13px;
+    margin-left: 5px;
+    width: 20%;
+    text-align: center;
+}
+
+.level__main_title {
+    text-align: right;
+    width: 100%;
+}
+
+.probs {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.defined {
+    margin-left: 35px;
+}
+
+.defined_mkbi {
+    margin-left: -10px;
+}
+
+.lvl_wrap {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mb_menu {
+    margin-bottom: 29.5px;
+}
+
+.none_pathogen {
+    font-size: 25px;
+    font-weight: bolder;
+    padding-left: 10px;
+    color: #e87722;
+    cursor: default;
+    border-top: 1px solid black;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.lvl_none_pathogen {
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.pathogen__item_vis {
+    display: flex;
 }
