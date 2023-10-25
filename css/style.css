@@ -774,6 +774,7 @@ input[type='checkbox'] {
     margin-top: 15px;
     cursor: pointer;
     padding: 0px 5px;
+    display: none;
 }
 
 .clear_main {

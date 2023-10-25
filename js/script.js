@@ -569,6 +569,10 @@ clears.forEach((clear) => {
             type = input.getAttribute('data-type');
         });
 
+        if (this.classList.contains('clear_none_pathogen')) {
+            return 0;
+        }
+
         let data_material_check = document.querySelectorAll('input[data-material="' + material + '"][value="' + input_value + '"]');
         if (!checkboxes_check(data_material_check)) {
             del_pathogen_block(input_value, material, type, 'material');
@@ -585,6 +589,8 @@ clears.forEach((clear) => {
             document.getElementById(input_value + ' hirurg').remove();
             array_pathogen.splice(array_pathogen.indexOf(input_value), 1);
         }
+
+        this.style.display = 'none';
     });
 });
 
@@ -643,6 +649,12 @@ groups_item.forEach((group_item) => {
                     fadeIn(hirurg,500);
                 }
 
+                this.parentNode.parentNode.querySelector('.clear').style.display = 'block';
+
+                if (this.classList.contains('input_none_pathogen')) {
+                    return 0;
+                }
+
                 if (!contains(array_pathogen, this.value)) {
                     array_pathogen.push(this.value);
                     pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception')));
@@ -668,6 +680,10 @@ groups_item.forEach((group_item) => {
                     fadeIn(hirurg,500);
                 }
 
+                if (this.classList.contains('input_none_pathogen')) {
+                    return 0;
+                }
+
                 if (!contains(array_pathogen, this.value)) {
                     array_pathogen.push(this.value);
                     pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception')));
@@ -677,6 +693,11 @@ groups_item.forEach((group_item) => {
                 }
                 
             } else {
+
+                if (this.classList.contains('input_none_pathogen')) {
+                    return 0;
+                }
+
                 let data_material_check = document.querySelectorAll('input[data-material="' + this.getAttribute('data-material') + '"][value="' + this.value + '"]');
                 del_pathogen_block(this.value, this.getAttribute('data-material'), this.getAttribute('data-type'), 'type');
 
@@ -855,6 +876,42 @@ add_btns.forEach((btn) => {
                 }
             });
             parent.parentNode.append(new_lvl);
+        }
+    });
+});
+
+
+const none_pathogens = document.querySelectorAll('.input_none_pathogen');
+
+function findAncestor (el, cls) {
+    while ((el = el.parentElement) && !el.classList.contains(cls));
+    return el;
+}
+
+document.querySelector('.clear_none_pathogen').addEventListener('click', function () {
+    let parent = findAncestor(this, 'pathogens__wrapper');
+    parent.querySelectorAll('input').forEach((inp) => {
+        if (!inp.classList.contains('input_none_pathogen')){
+            inp.disabled = false;
+        }
+    });
+});
+
+none_pathogens.forEach((none_pathogen) => {
+    none_pathogen.addEventListener('change', function () {
+        let parent = findAncestor(this, 'pathogens__wrapper');
+        if (this.checked) {
+            parent.querySelectorAll('input').forEach((inp) => {
+                if (!inp.classList.contains('input_none_pathogen')){
+                    inp.disabled = true;
+                }
+            });
+        } else {
+            parent.querySelectorAll('input').forEach((inp) => {
+                if (!inp.classList.contains('input_none_pathogen')){
+                    inp.disabled = false;
+                }
+            });
         }
     });
 });
