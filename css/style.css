@@ -327,7 +327,7 @@ input[type="radio"] {
     background-color: #00000042;
 }
 
-.close {
+.close, .modal_therapy_close {
     font-size: 25px;
     background-color: white;
 }
@@ -567,10 +567,12 @@ input[type="radio"] {
 
 .pathogen__item {
     display: none;
+    flex-wrap: nowrap;
 }
 
 .pathogen__item_visible {
     display: flex;
+    align-items: center;
 }
 
 .pathogen__item_active {
@@ -725,4 +727,108 @@ input[type='checkbox'] {
 
 .pathogen__item_vis {
     display: flex;
+}
+
+.info {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 17px;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.info p {
+    margin-bottom: 0;
+}
+
+.box {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+}
+
+.legend {
+    justify-content: center;
+    display: flex;
+}
+
+.legend_item {
+    margin: 10px;
+    display: flex;
+    align-items: center
+}
+
+.legend_descr {
+    font-weight: normal;
+}
+
+.its {
+    margin: 0 10px;
+}
+
+.clear {
+    position: absolute;
+    right: -10px;
+    margin-top: 15px;
+    cursor: pointer;
+    padding: 0px 5px;
+}
+
+.clear_main {
+    margin-top: 0px;
+}
+
+.clear:hover .clear_img{
+    color: red;
+    fill: #e87722;
+}
+
+.clear_img {
+    width: 25px;
+    height: 30px;
+    fill: black;
+}
+
+.clear_img:hover {
+    fill: #e87722;
+}
+
+.modal__btn-therapy {
+    margin-right: 15px;
+    background-color: #5de822;
+}
+
+.modal-dialog-therapy {
+    max-width: 990px;
+    margin: 0 auto; 
+    margin-top: 30px;
+}
+
+.therapy_title {
+    font-weight: bold;
+    margin: 10px 0px;
+}
+
+.therapy_scheme {
+    text-decoration: underline;
+    font-style: italic;
+    margin: 15px 0px;
+}
+
+.therapy_descr {
+    text-align: left;
+}
+
+.modal-content_therapy {
+    height: 900px;
+}
+
+.modal__body_therapy {
+    overflow-y: auto;
+}
+
+.therapy_display {
+    display: none;
 }

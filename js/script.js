@@ -1,6 +1,7 @@
 const questionnaires = document.querySelectorAll(".questionnaire__wrapper"),
     pacient = document.querySelector("#pacient"),
-    modal = document.querySelector('.modal');
+    modal = document.querySelector('.modal_result'),
+    modal_therapy = document.querySelector('.modal_therapy');
 
 const today = document.querySelector('#today');
 let date = new Date();
@@ -35,336 +36,222 @@ let name_p = getRandomIntInclusive(100,300);
 let lastname = getRandomIntInclusive(100,300);
 pacient.textContent = name_p + "" + lastname;
 
-function blood_confirmed_1 (checkboxes) {
-    let pcr = 0;
-    let mkbi = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-type') == 'pcr') {
-            if (checkbox.checked) {
-                pcr = 1;
-            }
-        } else {
-            if (checkbox.checked) {
-                mkbi = 1;
-            }
-        }
-    });
-
-    if (pcr == 1 && mkbi == 1) {
+function blood_confirmed_1 (pathogen) {
+    if (pathogen.getAttribute('data-blood-pcr') == 1 && pathogen.getAttribute('data-blood-mkbi') == 1) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function blood_confirmed_2 (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    let mkbi = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-type') == 'mkbi') {
-            if (checkbox.checked) {
-                mkbi += 1;
-            }
-        } 
-    });
-
-    if ((mkbi > 1) && (clinic_correspondence == 1)) {
+function blood_confirmed_2 (pathogen) {
+    if ((pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-probs') == 2) && (pathogen.getAttribute('data-corresponds') == 1)) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function blood_confirmed_3 (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    let mkbi = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-type') == 'mkbi') {
-            if (checkbox.checked) {
-                mkbi += 1;
-            }
-        } 
-    });
-
-    if ((mkbi == 1) && (clinic_correspondence == 1)) {
+function blood_confirmed_3 (pathogen) {
+    if ((pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-blood-pcr') != 1) && (pathogen.getAttribute('data-probs') == 1) && (pathogen.getAttribute('data-non-typical') != 'true') && (pathogen.getAttribute('data-corresponds') == 1)) {
+        console.log(pathogen.getAttribute('data-non-typical'));
         return 1;
     } else {
         return 0;
     }
 }
 
-function blood_confirmed_4 (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    let pcr = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-type') == 'pcr') {
-            if (checkbox.checked) {
-                pcr += 1;
-            }
-        } 
-    });
-
-    if ((pcr == 1) && (clinic_correspondence == 1) && (hirurg_correspondence == 1)) {
+function blood_confirmed_4 (pathogen) {
+    if ((pathogen.getAttribute('data-blood-pcr') == 1) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-corresponds') == 1)) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function blood_confirmed (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    if (blood_confirmed_1(checkboxes) || blood_confirmed_2(checkboxes, clinic_correspondence, hirurg_correspondence) || blood_confirmed_3(checkboxes, clinic_correspondence, hirurg_correspondence) || blood_confirmed_4(checkboxes, clinic_correspondence, hirurg_correspondence)) {
+function blood_confirmed (pathogen) {
+    if (blood_confirmed_1(pathogen) || blood_confirmed_2(pathogen) || blood_confirmed_3(pathogen) || blood_confirmed_4(pathogen)) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function tkan_confirmed_1_2_3 (checkboxes, clinic_correspondence) {
-    let pcr_tkan = 0;
-    let mkbi_tkan = 0;
-    let pcr_blood = 0;
-    let mkbi_blood = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-material') == 'blood') { 
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_blood = 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_blood = 1;
-                }
-            }
-        } else {
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_tkan = 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_tkan = 1;
-                }
-            }
-        }
-
-    });
-    let sum = pcr_tkan + mkbi_tkan + pcr_blood + mkbi_blood;
-    if (sum >= 3) {
+function tkan_confirmed_1 (pathogen) {
+    if ((pathogen.getAttribute('data-blood-pcr') == 1) && (pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-tkan-mkbi') == 1) && (pathogen.getAttribute('data-tkan-pcr') == 1)) {
         return 1;
     } else {
-        if (sum == 2) {
-            if (clinic_correspondence == 1) {
+        return 0;
+    }
+}
+
+function tkan_confirmed_2 (pathogen) {
+    if ((+pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-pcr')) == 3) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function tkan_confirmed_3 (pathogen) {
+    if (((+pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-pcr')) == 2) && (pathogen.getAttribute('data-corresponds') == 1)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function tkan_confirmed_4 (pathogen) {
+    let check_mkbi = false;
+    if (pathogen.getAttribute('data-blood-mkbi') == 1) {
+        check_mkbi = true;
+    }
+
+    let sum = +pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-pcr');
+
+    if ((((check_mkbi) && (sum == 1) && (pathogen.getAttribute('data-probs') == 2)) || ((!check_mkbi) && (sum == 1))) && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function tkan_confirmed_5 (pathogen) {
+    if ((pathogen.getAttribute('data-blood-pcr') + pathogen.getAttribute('data-blood-mkbi') + pathogen.getAttribute('data-tkan-mkbi') + pathogen.getAttribute('data-tkan-mkbi') == 1) && (pathogen.getAttribute('data-non-typical') != 'true') && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function tkan_confirmed (pathogen) {
+    if (tkan_confirmed_1(pathogen) || tkan_confirmed_2(pathogen) || tkan_confirmed_3(pathogen) || tkan_confirmed_4(pathogen) || tkan_confirmed_5(pathogen)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function blood_exception_1 (pathogen) {
+    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-probs') == 1) && (pathogen.getAttribute('data-blood-pcr') == 0) && (pathogen.getAttribute('data-corresponds') == 0)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+function blood_exception_2 (pathogen, pathogens) {
+    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-blood-pcr') == 0)) {
+
+        for (let i = 0; i < pathogens.length; i++) {
+            if ((pathogens[i].getAttribute('data-blood-pcr') == 1)) {
                 return 1;
-            } else {
-                return 0;
             }
-        } else {
-            return 0;
         }
+        return 0;
+    } else {
+        return 0;
     }
 }
 
-function tkan_confirmed_4 (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    let pcr_tkan = 0;
-    let mkbi_tkan = 0;
-    let pcr_blood = 0;
-    let mkbi_blood = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-material') == 'blood') { 
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_blood += 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_blood += 1;
-                }
-            }
-        } else {
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_tkan += 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_tkan += 1;
-                }
+function blood_exception_3 (pathogen, pathogens) {
+    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-blood-pcr') == 1)) {
+
+        for (let i = 0; i < pathogens.length; i++) {
+            if ((pathogens[i].getAttribute('data-blood-mkbi') == 1) && (pathogens[i].getAttribute('data-non-typical') != 'true')) {
+                return 1;
             }
         }
+        return 0;
+    } else {
+        return 0;
+    }
+}
 
-    });
-    if (((pcr_tkan > 1) || (mkbi_tkan > 1) || (pcr_blood > 1) || (mkbi_blood > 1)) && (clinic_correspondence == 1) && (hirurg_correspondence == 1)) {
+function blood_exception_4 (pathogen) {
+    if (pathogen.getAttribute('data-corresponds') == 0) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function tkan_confirmed_5 (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    let pcr_tkan = 0;
-    let mkbi_tkan = 0;
-    let pcr_blood = 0;
-    let mkbi_blood = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-material') == 'blood') { 
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_blood = 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_blood = 1;
-                }
-            }
-        } else {
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_tkan = 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_tkan = 1;
-                }
-            }
-        }
-
-    });
-    let sum = pcr_tkan + mkbi_tkan + pcr_blood + mkbi_blood;
-    if ((sum == 1) && (clinic_correspondence == 1) && (hirurg_correspondence == 1)) {
+function blood_exception (pathogen, pathogens) {
+    if (blood_exception_1(pathogen) || blood_exception_2(pathogen, pathogens) || blood_exception_3(pathogen, pathogens) || blood_exception_4(pathogen)) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function tkan_confirmed (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    if (tkan_confirmed_1_2_3(checkboxes) || tkan_confirmed_4(checkboxes, clinic_correspondence, hirurg_correspondence) || tkan_confirmed_5(checkboxes, clinic_correspondence, hirurg_correspondence)) {
+function tkan_exception_1 (pathogen) {
+    if (((pathogen.getAttribute('data-blood-mkbi') == 1) || (pathogen.getAttribute('data-tkan-mkbi') == 1)) && ((pathogen.getAttribute('data-blood-pcr') == 0) || (pathogen.getAttribute('data-tkan-pcr') == 0)) && (pathogen.getAttribute('data-corresponds') == 0)) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function blood_exception_1 (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    let pcr = 0;
-    let mkbi = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-type') == 'pcr') {
-            if (checkbox.checked) {
-                pcr += 1;
-            }
-        } 
-        if (checkbox.getAttribute('data-type') == 'mkbi') {
-            if (checkbox.checked) {
-                mkbi += 1;
-            }
-        } 
-    });
+function tkan_exception_2 (pathogen, pathogens) {
+    if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-mkbi') == 1) || (pathogen.getAttribute('data-tkan-mkbi') == 1)) && (pathogen.getAttribute('data-blood-pcr') == 0) && (pathogen.getAttribute('data-tkan-pcr') == 0)) {
 
-    if ((mkbi == 1) && (pcr == 0) && (clinic_correspondence == 0) && (hirurg_correspondence == 0)) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-function blood_exception_4 (clinic_correspondence, hirurg_correspondence) {
-    if ((clinic_correspondence == 0) && (hirurg_correspondence == 0)) {
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
-function blood_exception (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    if (checkboxes[0].getAttribute('data-exception') == 'true'){
-        if (blood_exception_1(checkboxes, clinic_correspondence, hirurg_correspondence)) {
-            return 1;
-        } else {
-            return 0;
-        }
-    } else {
-        if (blood_exception_4(clinic_correspondence, hirurg_correspondence)) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-}
-
-function tkan_exception_1 (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    let pcr_tkan = 0;
-    let mkbi_tkan = 0;
-    let pcr_blood = 0;
-    let mkbi_blood = 0;
-    checkboxes.forEach((checkbox) => {
-        if (checkbox.getAttribute('data-material') == 'blood') { 
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_blood = 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_blood = 1;
-                }
-            }
-        } else {
-            if (checkbox.getAttribute('data-type') == 'pcr') {
-                if (checkbox.checked) {
-                    pcr_tkan = 1;
-                }
-            } else {
-                if (checkbox.checked) {
-                    mkbi_tkan = 1;
-                }
+        for (let i = 0; i < pathogens.length; i++) {
+            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-blood-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && (pathogens[i].getAttribute('data-non-typical') != 'true')) {
+                return 1;
             }
         }
+        return 0;
+    } else {
+        return 0;
+    }
+}
 
-    });
+function tkan_exception_3 (pathogen, pathogens) {
+    if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-pcr') == 1) || (pathogen.getAttribute('data-tkan-pcr') == 1)) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-tkan-mkbi') == 0)) {
 
-    if (((mkbi_blood == 1) || (mkbi_tkan == 1)) && ((pcr_blood == 0) || (pcr_tkan == 0)) && (clinic_correspondence == 0)) {
+        for (let i = 0; i < pathogens.length; i++) {
+            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && (pathogens[i].getAttribute('data-blood-pcr') == 0) && (pathogens[i].getAttribute('data-tkan-pcr') == 0) && (pathogens[i].getAttribute('data-non-typical') != 'true')) {
+                return 1;
+            }
+        }
+        return 0;
+    } else {
+        return 0;
+    }
+}
+
+function tkan_exception_4 (pathogen) {
+    if ((pathogen.getAttribute('data-corresponds') == 0) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 0)) {
         return 1;
     } else {
         return 0;
     }
 }
 
-function tkan_exception_4 (clinic_correspondence, hirurg_correspondence) {
-    if ((clinic_correspondence == 0) && (hirurg_correspondence == 0)) {
+function tkan_exception (pathogen, pathogens) {
+    if (tkan_exception_1(pathogen) || tkan_exception_2(pathogen, pathogens) || tkan_exception_3(pathogen, pathogens) || tkan_exception_4(pathogen)) {
         return 1;
     } else {
         return 0;
-    }
-}
-
-function tkan_exception (checkboxes, clinic_correspondence, hirurg_correspondence) {
-    if (checkboxes[0].getAttribute('data-exception') == 'true'){
-        if (tkan_exception_1(checkboxes, clinic_correspondence, hirurg_correspondence)) {
-            return 1;
-        } else {
-            return 0;
-        }
-    } else {
-        if (tkan_exception_4(clinic_correspondence, hirurg_correspondence)) {
-            return 1;
-        } else {
-            return 0;
-        }
     }
 }
 
 function questionnaireSubmit() {
 
-    let clinic_correspondence, hirurg_correspondence, blood, tkan, conclusion;
+    document.querySelectorAll('.therapy_display').forEach((elem) => {
+        elem.style.display = 'none';
+    });
 
-    if (document.querySelector('input[name="clinic_correspondence"]:checked') == null || document.querySelector('input[name="hirurg_correspondence"]:checked') == null) {
-        conclusion = 'Выберите "соответствует" или "не соответствует" клиническая и хирургическая картины';
+    let blood, tkan, conclusion;
+
+    if (document.querySelector('input[name="klapan"]:checked') == null || document.querySelector('input[name="protez"]:checked') == null || document.querySelector('input[name="local"]:checked') == null || document.querySelector('input[name="psychoactive"]:checked') == null) {
+        conclusion = 'Заполните всю информацию об инфекционном эндокардите';
         let resultModal = document.getElementById("modal__body");
         resultModal.innerText = conclusion;
-
+        document.querySelector('.modal__btn-therapy').disabled = true;
         fadeIn(modal,500);
         return 0;
     }
-
-    clinic_correspondence = document.querySelector('input[name="clinic_correspondence"]:checked').value; 
-    hirurg_correspondence = document.querySelector('input[name="hirurg_correspondence"]:checked').value;
 
     if (document.querySelector('#blood').checked) {
         blood = 1;
@@ -379,51 +266,211 @@ function questionnaireSubmit() {
     }
 
     const pathogens__check_clinic = document.querySelector('.pathogens__check_clinic');
-    let check_pathogens = pathogens__check_clinic.querySelectorAll('.pathogen');
 
-    let pathogens = [];
-    check_pathogens.forEach((check_pathogen) => {
-        pathogens.push(check_pathogen.textContent);
-    });
+    const pathogens = pathogens__check_clinic.querySelectorAll('.pathogen');
 
     let confirmed = [];
     let unconfirmed = [];
-    let result;
     
     for (let i = 0; i < pathogens.length; i++) {
-        let checkboxes = document.querySelectorAll('input[value="' + pathogens[i] + '"]');
         if (blood && !tkan) {
-            if (blood_confirmed(checkboxes, clinic_correspondence, hirurg_correspondence)) {
+            if (blood_confirmed(pathogens[i])) {
                 confirmed.push(pathogens[i]);
             }
-            if (blood_exception(checkboxes, clinic_correspondence, hirurg_correspondence)) {
+            if (blood_exception(pathogens[i], pathogens)) {
                 unconfirmed.push(pathogens[i]);
             }
         } else {
-            if (tkan_confirmed(checkboxes, clinic_correspondence, hirurg_correspondence)) {
+            if (tkan_confirmed(pathogens[i])) {
                 confirmed.push(pathogens[i]);
             }
-            if (tkan_exception(checkboxes, clinic_correspondence, hirurg_correspondence)) {
+            if (tkan_exception(pathogens[i], pathogens)) {
                 unconfirmed.push(pathogens[i]);
             }
         }
     }
 
     conclusion = 'Подтвержденные возбудители:\n';
-    for (let i = 0; i < confirmed.length; i++) { 
-        conclusion += confirmed[i] + ' ';
+    if (confirmed.length == 0) {
+        conclusion += 'Отсутствуют';
+    } else {
+        for (let i = 0; i < confirmed.length; i++) { 
+            conclusion += confirmed[i].textContent + ' ';
+        }
     }
 
+
     conclusion += '\nИсключенные возбудители:\n';
-    for (let i = 0; i < unconfirmed.length; i++) { 
-        conclusion += unconfirmed[i] + ' ';
+    if (unconfirmed.length == 0) {
+        conclusion += 'Отсутствуют';
+    } else {
+        for (let i = 0; i < unconfirmed.length; i++) { 
+            conclusion += unconfirmed[i].textContent + ' ';
+        }
     }
 
     let resultModal = document.getElementById("modal__body");
     resultModal.innerText = conclusion;
 
+    document.querySelector('.modal__btn-therapy').disabled = false;
+    let klapan, protez, local, psycho;
+    klapan = document.querySelector('input[name="klapan"]:checked').value;
+    protez = document.querySelector('input[name="protez"]:checked').value;
+    local = document.querySelector('input[name="local"]:checked').value;
+    psycho = document.querySelector('input[name="psychoactive"]:checked').value;
+
+    for (let i = 0; i < confirmed.length; i++) { 
+        let therapy_array = [];
+        if ((confirmed[i].getAttribute('data-subgroup') == 'Streptococcus viridans') || confirmed[i].textContent == 'Streptococcus bovis (Streptococcus gallolyticus)') {
+            if (!contains(therapy_array, 1) && !contains(therapy_array, 2)) {
+                therapy_array.push(1);
+                therapy_array.push(2);
+                document.getElementById('therapy_1').style.display = 'block';
+                document.getElementById('therapy_2').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].textContent == 'Streptococcus pneumoniae') {
+            if (!contains(therapy_array, 3)) {
+                therapy_array.push(3);
+                document.getElementById('therapy_3').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].getAttribute('data-group') == 'Other') {
+            if (!contains(therapy_array, 4)) {
+                therapy_array.push(4);
+                document.getElementById('therapy_4').style.display = 'block';
+            }
+        }
+
+        if (klapan == 'native' && local == 'left' && confirmed[i].textContent == 'Staphylococcus aureus MSSA') {
+            if (!contains(therapy_array, 'MSSA')) {
+                therapy_array.push('MSSA');
+                document.getElementById('therapy_MSSA').style.display = 'block';
+            }
+        }
+
+        if (klapan == 'native' && local == 'left' && confirmed[i].textContent == 'Staphylococcus aureus MRSA') {
+            if (!contains(therapy_array, 'MRSA')) {
+                therapy_array.push('MRSA');
+                document.getElementById('therapy_MRSA').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].getAttribute('data-subgroup') == 'Staphylococcus CONS') {
+            if (!contains(therapy_array, 7)) {
+                therapy_array.push(7);
+                document.getElementById('therapy_7').style.display = 'block';
+            }
+        }
+
+        if (klapan == 'native' && local == 'right') {
+            if (!contains(therapy_array, 8)) {
+                therapy_array.push(8);
+                document.getElementById('therapy_8').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].getAttribute('data-group') == 'Enterococcus sp.') {
+            if (!contains(therapy_array, 9)) {
+                therapy_array.push(9);
+                document.getElementById('therapy_9').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].getAttribute('data-group') == 'HACEK') {
+            if (!contains(therapy_array, 10)) {
+                therapy_array.push(10);
+                document.getElementById('therapy_10').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].getAttribute('data-group') == 'Не-HACEK Палочковидные бактерии') {
+            if (!contains(therapy_array, 11)) {
+                therapy_array.push(11);
+                document.getElementById('therapy_11').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].getAttribute('data-subgroup') == 'Candida sp.') {
+            if (!contains(therapy_array, 'Candida')) {
+                therapy_array.push('Candida');
+                document.getElementById('therapy_Candida').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].getAttribute('data-subgroup') == 'Aspergillus sp.') {
+            if (!contains(therapy_array, 'Aspergillus')) {
+                therapy_array.push('Aspergillus');
+                document.getElementById('therapy_Aspergillus').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].textContent == 'Brucella sp.') {
+            if (!contains(therapy_array, 'Brucella')) {
+                therapy_array.push('Brucella');
+                document.getElementById('therapy_Brucella').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].textContent == 'Coxiella burnetii') {
+            if (!contains(therapy_array, 'burnetii')) {
+                therapy_array.push('burnetii');
+                document.getElementById('therapy_burnetii').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].textContent == 'Bartonella sp.') {
+            if (!contains(therapy_array, 'Bartonella')) {
+                therapy_array.push('Bartonella');
+                document.getElementById('therapy_Bartonella').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].textContent == 'Mycoplasma sp.') {
+            if (!contains(therapy_array, 'Mycoplasma')) {
+                therapy_array.push('Mycoplasma');
+                document.getElementById('therapy_Mycoplasma').style.display = 'block';
+            }
+        }
+
+        if (confirmed[i].textContent == 'Tropheryma whipplei') {
+            if (!contains(therapy_array, 'whipplei')) {
+                therapy_array.push('whipplei');
+                document.getElementById('therapy_whipplei').style.display = 'block';
+            }
+        }
+
+        if (protez == 'late') {
+            if (!contains(therapy_array, 'late_protez')) {
+                therapy_array.push('late_protez');
+                document.getElementById('therapy_late_protez').style.display = 'block';
+            }
+        }
+
+        if (protez == 'early') {
+            if (!contains(therapy_array, 'early_protez')) {
+                therapy_array.push('early_protez');
+                document.getElementById('therapy_early_protez').style.display = 'block';
+            }
+        }
+    }
+
     fadeIn(modal,500);
 }
+
+document.querySelector('.modal__btn-therapy').addEventListener('click', function () {
+    fadeIn(modal_therapy,500);
+});
+
+document
+    .querySelector(".modal__btn-therapy-close")
+    .addEventListener("click", () => fadeOut(modal_therapy,500));
+
+document
+    .querySelector(".modal_therapy_close")
+    .addEventListener("click", () => fadeOut(modal_therapy,500));
 
 document
     .querySelector(".modal__btn-close")
@@ -488,7 +535,60 @@ function checkboxes_clear (checkboxes) {
     });
 }
 
-function new_pathogen_block(value, type_picture, material, research, group, probs = 1, type_input = 'checkbox') {
+function update_pathogen_block(update_element_value, data_attr_material, data_attr_type) {
+    update_element_clinic = document.getElementById(update_element_value + ' ' + 'clinic');
+    update_element_hirurg = document.getElementById(update_element_value + ' ' + 'hirurg');
+    update_element_clinic.setAttribute('data-'+data_attr_material, 1);
+    update_element_hirurg.setAttribute('data-'+data_attr_material, 1);
+    update_element_clinic.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 1);
+    update_element_hirurg.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 1);
+}
+
+function del_pathogen_block(update_element_value, data_attr_material, data_attr_type, what_update) {
+    update_element_clinic = document.getElementById(update_element_value + ' ' + 'clinic');
+    update_element_hirurg = document.getElementById(update_element_value + ' ' + 'hirurg');
+
+    if (what_update == 'material') {
+        update_element_clinic.setAttribute('data-'+data_attr_material, 0);
+        update_element_hirurg.setAttribute('data-'+data_attr_material, 0);
+    } else {
+        update_element_clinic.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 0);
+        update_element_hirurg.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 0);
+    }
+
+}
+
+const clears = document.querySelectorAll('.clear');
+clears.forEach((clear) => {
+    clear.addEventListener('click', function() {
+        let input_value, material, type;
+        clear.parentNode.querySelectorAll('input').forEach((input) => {
+            input.checked = false;
+            input_value = input.value;
+            material = input.getAttribute('data-material');
+            type = input.getAttribute('data-type');
+        });
+
+        let data_material_check = document.querySelectorAll('input[data-material="' + material + '"][value="' + input_value + '"]');
+        if (!checkboxes_check(data_material_check)) {
+            del_pathogen_block(input_value, material, type, 'material');
+        }
+
+        let data_type_check = document.querySelectorAll('input[data-type="' + type + '"][value="' + input_value + '"]');
+        if (!checkboxes_check(data_type_check)) {
+            del_pathogen_block(input_value, material, type, 'type');
+        }
+
+        let checkboxes_named = document.querySelectorAll('input[type="checkbox"][value="' + input_value + '"]');
+        if (!checkboxes_check(checkboxes_named)) {
+            document.getElementById(input_value + ' clinic').remove();
+            document.getElementById(input_value + ' hirurg').remove();
+            array_pathogen.splice(array_pathogen.indexOf(input_value), 1);
+        }
+    });
+});
+
+function new_pathogen_block(value, type_picture, material, research, group, subgroup, probs = 1, type_input = 'checkbox', exception = false, non_typical = false) {
     let pathogen_elem = document.createElement('div');
     pathogen_elem.className = 'pathogen pathogen_not_corresponds';
     pathogen_elem.id = value + ' ' + type_picture;
@@ -496,12 +596,18 @@ function new_pathogen_block(value, type_picture, material, research, group, prob
     pathogen_elem.setAttribute('data-corresponds', 0);
     let pathogen_name = document.createTextNode(value);
     pathogen_elem.append(pathogen_name);
-    pathogen_elem.setAttribute('data-material', material);
-    pathogen_elem.setAttribute('data-type', research);
+    pathogen_elem.setAttribute('data-'+ material, 1);
+    pathogen_elem.setAttribute('data-'+ material + '-' + research, 1);
+    // pathogen_elem.setAttribute('data-material', material);
+    // pathogen_elem.setAttribute('data-type', research);
     pathogen_elem.setAttribute('data-group', group);
+    pathogen_elem.setAttribute('data-subgroup', subgroup);
+    pathogen_elem.setAttribute('data-type-picture', type_picture);
     if (type_input == 'radio') {
         pathogen_elem.setAttribute('data-probs', probs);
     }
+    pathogen_elem.setAttribute('data-exception', exception);
+    pathogen_elem.setAttribute('data-non-typical', non_typical);
 
     pathogen_elem.addEventListener('click', function () {
 
@@ -521,6 +627,8 @@ function new_pathogen_block(value, type_picture, material, research, group, prob
     return pathogen_elem;
 }
 
+
+
 //работа с чекбоксами
 const groups_item = document.querySelectorAll(".pathogen__group-item"); //берем все группы
 groups_item.forEach((group_item) => {
@@ -529,7 +637,6 @@ groups_item.forEach((group_item) => {
 
     radios.forEach((radio) => {
         radio.addEventListener('change', function () {
-            console.log(this.value);
             if (this.checked) {
                 if (getComputedStyle(clinic).display == "none") {
                     fadeIn(clinic,500);
@@ -538,11 +645,12 @@ groups_item.forEach((group_item) => {
 
                 if (!contains(array_pathogen, this.value)) {
                     array_pathogen.push(this.value);
-                    pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
-                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
+                    pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception')));
+                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception')));
                 } else {
                     document.getElementById(this.value + ' ' + 'clinic').setAttribute('data-probs', this.getAttribute('data-probs'));
                     document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
+                    update_pathogen_block(this.value, this.getAttribute('data-material'),this.getAttribute('data-type'));
                 }
             }
         });
@@ -562,18 +670,26 @@ groups_item.forEach((group_item) => {
 
                 if (!contains(array_pathogen, this.value)) {
                     array_pathogen.push(this.value);
-                    pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
-                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
+                    pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception')));
+                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception')));
+                } else {
+                    update_pathogen_block(this.value, this.getAttribute('data-material'),this.getAttribute('data-type'));
                 }
                 
             } else {
+                let data_material_check = document.querySelectorAll('input[data-material="' + this.getAttribute('data-material') + '"][value="' + this.value + '"]');
+                del_pathogen_block(this.value, this.getAttribute('data-material'), this.getAttribute('data-type'), 'type');
+
+                if (!checkboxes_check(data_material_check)) {
+                    del_pathogen_block(this.value, this.getAttribute('data-material'), this.getAttribute('data-type'), 'material');
+                }
+
                 let checkboxes_named = document.querySelectorAll('input[value="' + this.value + '"]'); //массив всех чекбоксов с одинаковым значением
                 //если убираем отметку, то проверяем остались ли отмеченные чекбоксы с одинаковым значением, если нет, то удаляем из картин элемент
                 if (!checkboxes_check(checkboxes_named)) {
                     array_pathogen.splice(array_pathogen.indexOf(checkbox.value), 1);
                     document.getElementById(this.value + ' clinic').remove();
                     document.getElementById(this.value + ' hirurg').remove();
-                    // checkboxes_clear(checkboxes_named);
                 }
             }
         });
@@ -623,8 +739,8 @@ add_btns.forEach((btn) => {
 
         if (!contains(array_pathogen, new_pathogen)) {
             array_pathogen.push(new_pathogen);
-            pathogens__check_clinic.append(new_pathogen_block(new_pathogen, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'),1,this.getAttribute('data-type-input')));
-            pathogens__check_hirurg.append(new_pathogen_block(new_pathogen, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'),1,this.getAttribute('data-type-input')));
+            pathogens__check_clinic.append(new_pathogen_block(new_pathogen, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, this.getAttribute('data-type-input'), this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+            pathogens__check_hirurg.append(new_pathogen_block(new_pathogen, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, this.getAttribute('data-type-input'), this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
         }
         // parent.parentNode.append(new_pathogen_block(new_pathogen, 'clinic'));
         if (this.getAttribute('data-type-input') == 'radio') {
@@ -632,14 +748,45 @@ add_btns.forEach((btn) => {
             let new_lvl = lvl.cloneNode(true);
             let new_inputs = new_lvl.querySelectorAll('input');
             let type = new_lvl.querySelector('.types');
+            let new_clear = new_lvl.querySelector('.clear');
+
+            new_clear.addEventListener('click', function() {
+                let input_value;
+                new_clear.parentNode.querySelectorAll('input').forEach((input) => {
+                    input.checked = false;
+                    input_value = input.value;
+                    material = input.getAttribute('data-material');
+                    type = input.getAttribute('data-type');
+                });
+
+                let data_material_check = document.querySelectorAll('input[data-material="' + material + '"][value="' + input_value + '"]');
+                if (!checkboxes_check(data_material_check)) {
+                    del_pathogen_block(input_value, material, type, 'material');
+                }
+        
+                let data_type_check = document.querySelectorAll('input[data-type="' + type + '"][value="' + input_value + '"]');
+                if (!checkboxes_check(data_type_check)) {
+                    del_pathogen_block(input_value, material, type, 'type');
+                }
+
+                let checkboxes_named = document.querySelectorAll('input[type="checkbox"][value="' + input_value + '"]');
+                if (!checkboxes_check(checkboxes_named)) {
+                    document.getElementById(input_value + ' clinic').remove();
+                    document.getElementById(input_value + ' hirurg').remove();
+                    array_pathogen.splice(array_pathogen.indexOf(input_value), 1);
+                }
+            });
+
             new_inputs.forEach((new_input) => {
                 new_input.value = new_pathogen;
                 new_input.setAttribute('data-material', this.getAttribute('data-material'));
                 new_input.setAttribute('data-type', this.getAttribute('data-type'));
                 new_input.setAttribute('data-group', this.getAttribute('data-group'));
+                new_input.setAttribute('data-subgroup', 'other');
+                new_input.setAttribute('data-non-typical', this.getAttribute('data-non-typical'));
+                new_input.setAttribute('name', new_pathogen);
 
                 new_input.addEventListener('change', function () {
-                    console.log(this.value);
                     if (this.checked) {
                         if (getComputedStyle(clinic).display == "none") {
                             fadeIn(clinic,500);
@@ -648,8 +795,8 @@ add_btns.forEach((btn) => {
 
                         if (!contains(array_pathogen, this.value)) {
                             array_pathogen.push(this.value);
-                            pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
-                            pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-probs'), 'radio'));
+                            pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+                            pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
                         } else {
                             document.getElementById(this.value + ' ' + 'clinic').setAttribute('data-probs', this.getAttribute('data-probs'));
                             document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
@@ -673,6 +820,8 @@ add_btns.forEach((btn) => {
             new_input.setAttribute('data-material', this.getAttribute('data-material'));
             new_input.setAttribute('data-type', this.getAttribute('data-type'));
             new_input.setAttribute('data-group', this.getAttribute('data-group'));
+            new_input.setAttribute('data-subgroup', 'other');
+            new_input.setAttribute('data-non-typical', this.getAttribute('data-non-typical'));
             type.textContent = new_pathogen;
             new_lvl.classList.add('pathogen__item_vis');
 
@@ -681,11 +830,20 @@ add_btns.forEach((btn) => {
                 if (this.checked) {
                     if (!contains(array_pathogen, this.value)) {
                         array_pathogen.push(this.value);
-                        pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
-                        pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group')));
+                        pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+                        pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+                    } else {
+                        update_pathogen_block(this.value, this.getAttribute('data-material'),this.getAttribute('data-type'));
                     }
                     
                 } else {
+                    let data_material_check = document.querySelectorAll('input[data-material="' + this.getAttribute('data-material') + '"][value="' + this.value + '"]');
+                    del_pathogen_block(this.value, this.getAttribute('data-material'), this.getAttribute('data-type'), 'type');
+
+                    if (!checkboxes_check(data_material_check)) {
+                        del_pathogen_block(this.value, this.getAttribute('data-material'), this.getAttribute('data-type'), 'material');
+                    }
+
                     let checkboxes_named = document.querySelectorAll('input[value="' + this.value + '"]'); //массив всех чекбоксов с одинаковым значением
                     //если убираем отметку, то проверяем остались ли отмеченные чекбоксы с одинаковым значением, если нет, то удаляем из картин элемент
                     if (!checkboxes_check(checkboxes_named)) {
