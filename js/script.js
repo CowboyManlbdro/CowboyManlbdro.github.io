@@ -895,6 +895,7 @@ document.querySelector('.clear_none_pathogen').addEventListener('click', functio
             inp.disabled = false;
         }
     });
+    this.style.display = 'none';
 });
 
 none_pathogens.forEach((none_pathogen) => {
