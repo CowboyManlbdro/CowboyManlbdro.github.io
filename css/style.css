@@ -590,7 +590,7 @@ input[type='checkbox'] {
 }
 
 .pathogen {
-    margin: 0 10px;
+    margin: 3px 10px;
     font-style: italic;
     padding: 5px;
     border: 1px solid white;
@@ -832,4 +832,14 @@ input[type='checkbox'] {
 
 .therapy_display {
     display: none;
+}
+
+.ie_hidden {
+    width: 100%;
+    display: none;
+    border-bottom: 1px solid black;
+}
+
+.one_level {
+    width: 40%;
 }

@@ -36,6 +36,21 @@ let name_p = getRandomIntInclusive(100,300);
 let lastname = getRandomIntInclusive(100,300);
 pacient.textContent = name_p + "" + lastname;
 
+const typical_group_pathogens = ['Haemophilus sp.', 'Aggregatibacter sp. (ранее Actinobacillus sp.)', 'Cardiobacterium sp.', 'Eikenella sp.', 'Kingella sp.'];
+const typical_pathogens = ['Streptococcus cristatus', 'Streptococcus gordonii', 'Streptococcus mitis', 'Streptococcus pneumoniae', 'Streptococcus sanguis', 'Streptococcus bovis (Streptococcus gallolyticus)', 'Haemophilus sp.', 'Aggregatibacter sp. (ранее Actinobacillus sp.)', 'Cardiobacterium sp.', 'Eikenella sp.', 'Kingella sp.', 'Staphylococcus aureus MSSA', 'Staphylococcus aureus MRSA', 'Enterococcus faecalis', 'Streptococcus oralis'];
+
+// const unconfirmed_group_pathogens = ['Corynebacterium sp.', 'Bacillus sp.'];
+// const unconfirmed_subgroup_pathogens = ['Staphylococcus CONS','Streptococcus viridans','Propionibacterium acnes'];
+
+function contains(arr, elem) {
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i] === elem) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function blood_confirmed_1 (pathogen) {
     if (pathogen.getAttribute('data-blood-pcr') == 1 && pathogen.getAttribute('data-blood-mkbi') == 1) {
         return 1;
@@ -53,8 +68,7 @@ function blood_confirmed_2 (pathogen) {
 }
 
 function blood_confirmed_3 (pathogen) {
-    if ((pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-blood-pcr') != 1) && (pathogen.getAttribute('data-probs') == 1) && (pathogen.getAttribute('data-non-typical') != 'true') && (pathogen.getAttribute('data-corresponds') == 1)) {
-        console.log(pathogen.getAttribute('data-non-typical'));
+    if ((pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-blood-pcr') != 1) && (pathogen.getAttribute('data-probs') == 1) && ((contains(typical_group_pathogens, pathogen.getAttribute('data-group'))) || (contains(typical_pathogens, pathogen.textContent)) || (contains(typical_group_pathogens, pathogen.textContent))) && (pathogen.getAttribute('data-corresponds') == 1)) {
         return 1;
     } else {
         return 0;
@@ -117,7 +131,7 @@ function tkan_confirmed_4 (pathogen) {
 }
 
 function tkan_confirmed_5 (pathogen) {
-    if ((pathogen.getAttribute('data-blood-pcr') + pathogen.getAttribute('data-blood-mkbi') + pathogen.getAttribute('data-tkan-mkbi') + pathogen.getAttribute('data-tkan-mkbi') == 1) && (pathogen.getAttribute('data-non-typical') != 'true') && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
+    if ((+pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') == 1) && ((contains(typical_group_pathogens, pathogen.getAttribute('data-group'))) || (contains(typical_pathogens, pathogen.textContent)) || (contains(typical_group_pathogens, pathogen.textContent))) && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
         return 1;
     } else {
         return 0;
@@ -156,9 +170,8 @@ function blood_exception_2 (pathogen, pathogens) {
 
 function blood_exception_3 (pathogen, pathogens) {
     if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-blood-pcr') == 1)) {
-
         for (let i = 0; i < pathogens.length; i++) {
-            if ((pathogens[i].getAttribute('data-blood-mkbi') == 1) && (pathogens[i].getAttribute('data-non-typical') != 'true')) {
+            if ((pathogens[i].getAttribute('data-blood-mkbi') == 1) && ((contains(typical_group_pathogens, pathogens[i].getAttribute('data-group'))) || (contains(typical_pathogens, pathogens[i].textContent)) || (contains(typical_group_pathogens, pathogens[i].textContent)))) {
                 return 1;
             }
         }
@@ -196,7 +209,7 @@ function tkan_exception_2 (pathogen, pathogens) {
     if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-mkbi') == 1) || (pathogen.getAttribute('data-tkan-mkbi') == 1)) && (pathogen.getAttribute('data-blood-pcr') == 0) && (pathogen.getAttribute('data-tkan-pcr') == 0)) {
 
         for (let i = 0; i < pathogens.length; i++) {
-            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-blood-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && (pathogens[i].getAttribute('data-non-typical') != 'true')) {
+            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-blood-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && ((contains(typical_group_pathogens, pathogens[i].getAttribute('data-group'))) || (contains(typical_pathogens, pathogens[i].textContent)) || (contains(typical_group_pathogens, pathogens[i].textContent)))) {
                 return 1;
             }
         }
@@ -210,7 +223,7 @@ function tkan_exception_3 (pathogen, pathogens) {
     if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-pcr') == 1) || (pathogen.getAttribute('data-tkan-pcr') == 1)) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-tkan-mkbi') == 0)) {
 
         for (let i = 0; i < pathogens.length; i++) {
-            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && (pathogens[i].getAttribute('data-blood-pcr') == 0) && (pathogens[i].getAttribute('data-tkan-pcr') == 0) && (pathogens[i].getAttribute('data-non-typical') != 'true')) {
+            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && (pathogens[i].getAttribute('data-blood-pcr') == 0) && (pathogens[i].getAttribute('data-tkan-pcr') == 0) && ((contains(typical_group_pathogens, pathogens[i].getAttribute('data-group'))) || (contains(typical_pathogens, pathogens[i].textContent)) || (contains(typical_group_pathogens, pathogens[i].textContent)))) {
                 return 1;
             }
         }
@@ -236,6 +249,33 @@ function tkan_exception (pathogen, pathogens) {
     }
 }
 
+const protez_klapan = document.querySelector('#protez_klapan');
+const native_klapan = document.querySelector('#native_klapan');
+
+protez_klapan.addEventListener('change', function () {
+    if (this.checked) {
+        fadeIn(document.querySelector('.protez'), 500);
+        fadeOut(document.querySelector('.native'), 500);
+        document.querySelectorAll('.native input').forEach((elem) => {
+            elem.checked = false;
+        });
+    } else {
+        fadeOut(document.querySelector('.protez'), 500);
+    }
+});
+
+native_klapan.addEventListener('change', function () {
+    if (this.checked) {
+        fadeIn(document.querySelector('.native'), 500);
+        fadeOut(document.querySelector('.protez'), 500);
+        document.querySelectorAll('.protez input').forEach((elem) => {
+            elem.checked = false;
+        });
+    } else {
+        fadeOut(document.querySelector('.native'), 500);
+    }
+});
+
 function questionnaireSubmit() {
 
     document.querySelectorAll('.therapy_display').forEach((elem) => {
@@ -244,8 +284,8 @@ function questionnaireSubmit() {
 
     let blood, tkan, conclusion;
 
-    if (document.querySelector('input[name="klapan"]:checked') == null || document.querySelector('input[name="protez"]:checked') == null || document.querySelector('input[name="local"]:checked') == null || document.querySelector('input[name="psychoactive"]:checked') == null) {
-        conclusion = 'Заполните всю информацию об инфекционном эндокардите';
+    if (document.querySelector('input[name="klapan"]:checked') == null) {
+        conclusion = 'Выберете тип клапана';
         let resultModal = document.getElementById("modal__body");
         resultModal.innerText = conclusion;
         document.querySelector('.modal__btn-therapy').disabled = true;
@@ -314,145 +354,239 @@ function questionnaireSubmit() {
 
     document.querySelector('.modal__btn-therapy').disabled = false;
     let klapan, protez, local, psycho;
+    protez = null;
+    local = null;
+    psycho = null;
+
     klapan = document.querySelector('input[name="klapan"]:checked').value;
-    protez = document.querySelector('input[name="protez"]:checked').value;
-    local = document.querySelector('input[name="local"]:checked').value;
-    psycho = document.querySelector('input[name="psychoactive"]:checked').value;
 
-    for (let i = 0; i < confirmed.length; i++) { 
+    if (document.querySelector('input[name="protez"]:checked') != null) {
+        protez = document.querySelector('input[name="protez"]:checked').value;
+    }
+
+    if (document.querySelector('input[name="local"]:checked') != null) {
+        local = document.querySelector('input[name="local"]:checked').value;
+    }
+
+    if (document.querySelector('input[name="psychoactive"]:checked') != null) {
+        psycho = document.querySelector('input[name="psychoactive"]:checked').value;
+    }
+
+    
+    if (confirmed.length == 0) {
         let therapy_array = [];
-        if ((confirmed[i].getAttribute('data-subgroup') == 'Streptococcus viridans') || confirmed[i].textContent == 'Streptococcus bovis (Streptococcus gallolyticus)') {
-            if (!contains(therapy_array, 1) && !contains(therapy_array, 2)) {
-                therapy_array.push(1);
-                therapy_array.push(2);
-                document.getElementById('therapy_1').style.display = 'block';
-                document.getElementById('therapy_2').style.display = 'block';
+        if (protez != null) {
+            if (protez == 'late') {
+                if (!contains(therapy_array, 'late_protez')) {
+                    therapy_array.push('late_protez');
+                    document.getElementById('therapy_late_protez').style.display = 'block';
+                }
             }
+    
+            if (protez == 'early') {
+                if (!contains(therapy_array, 'early_protez')) {
+                    therapy_array.push('early_protez');
+                    document.getElementById('therapy_early_protez').style.display = 'block';
+                }
+            }
+        } else {
+            document.getElementById('therapy_late_protez').style.display = 'block';
+            document.getElementById('therapy_early_protez').style.display = 'block';
         }
 
-        if (confirmed[i].textContent == 'Streptococcus pneumoniae') {
-            if (!contains(therapy_array, 3)) {
-                therapy_array.push(3);
-                document.getElementById('therapy_3').style.display = 'block';
+    } else {
+        for (let i = 0; i < confirmed.length; i++) { 
+            let therapy_array = [];
+            if ((confirmed[i].getAttribute('data-subgroup') == 'Streptococcus viridans') || confirmed[i].textContent == 'Streptococcus bovis (Streptococcus gallolyticus)') {
+                if (!contains(therapy_array, 1) && !contains(therapy_array, 2)) {
+                    therapy_array.push(1);
+                    therapy_array.push(2);
+                    document.getElementById('therapy_1').style.display = 'block';
+                    document.getElementById('therapy_2').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].getAttribute('data-group') == 'Other') {
-            if (!contains(therapy_array, 4)) {
-                therapy_array.push(4);
-                document.getElementById('therapy_4').style.display = 'block';
+            if (confirmed[i].textContent == 'Streptococcus pneumoniae') {
+                if (!contains(therapy_array, 3)) {
+                    therapy_array.push(3);
+                    document.getElementById('therapy_3').style.display = 'block';
+                }
             }
-        }
 
-        if (klapan == 'native' && local == 'left' && confirmed[i].textContent == 'Staphylococcus aureus MSSA') {
-            if (!contains(therapy_array, 'MSSA')) {
-                therapy_array.push('MSSA');
-                document.getElementById('therapy_MSSA').style.display = 'block';
+            if (confirmed[i].getAttribute('data-group') == 'Streptococcus sp.' && ((confirmed[i].textContent != 'Streptococcus pneumoniae' && confirmed[i].textContent != 'Streptococcus bovis (Streptococcus gallolyticus)' && confirmed[i].getAttribute('data-subgroup') != 'Streptococcus viridans') || (confirmed[i].getAttribute('data-subgroup') == 'other'))) {
+                if (!contains(therapy_array, 4)) {
+                    therapy_array.push(4);
+                    document.getElementById('therapy_4').style.display = 'block';
+                }
             }
-        }
 
-        if (klapan == 'native' && local == 'left' && confirmed[i].textContent == 'Staphylococcus aureus MRSA') {
-            if (!contains(therapy_array, 'MRSA')) {
-                therapy_array.push('MRSA');
-                document.getElementById('therapy_MRSA').style.display = 'block';
+            if (klapan == 'native' && local == 'left' && confirmed[i].textContent == 'Staphylococcus aureus MSSA') {
+                if (!contains(therapy_array, 'MSSA')) {
+                    therapy_array.push('MSSA');
+                    document.getElementById('therapy_MSSA').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].getAttribute('data-subgroup') == 'Staphylococcus CONS') {
-            if (!contains(therapy_array, 7)) {
-                therapy_array.push(7);
-                document.getElementById('therapy_7').style.display = 'block';
+            if (klapan == 'native' && local == 'left' && confirmed[i].textContent == 'Staphylococcus aureus MRSA') {
+                if (!contains(therapy_array, 'MRSA')) {
+                    therapy_array.push('MRSA');
+                    document.getElementById('therapy_MRSA').style.display = 'block';
+                }
             }
-        }
 
-        if (klapan == 'native' && local == 'right') {
-            if (!contains(therapy_array, 8)) {
-                therapy_array.push(8);
-                document.getElementById('therapy_8').style.display = 'block';
+            if ((confirmed[i].getAttribute('data-subgroup') == 'Staphylococcus CONS') || (confirmed[i].getAttribute('data-group') == 'Staphylococcus sp.' && confirmed[i].getAttribute('data-subgroup') == 'other')) {
+                if (!contains(therapy_array, 7)) {
+                    therapy_array.push(7);
+                    document.getElementById('therapy_7').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].getAttribute('data-group') == 'Enterococcus sp.') {
-            if (!contains(therapy_array, 9)) {
-                therapy_array.push(9);
-                document.getElementById('therapy_9').style.display = 'block';
+            if (confirmed[i].getAttribute('data-group') == 'Диплококки') {
+                if (!contains(therapy_array, 'late_protez')) {
+                    therapy_array.push('late_protez');
+                    document.getElementById('therapy_late_protez').style.display = 'block';
+                }
+
+                if (!contains(therapy_array, 'early_protez')) {
+                    therapy_array.push('early_protez');
+                    document.getElementById('therapy_early_protez').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].getAttribute('data-group') == 'HACEK') {
-            if (!contains(therapy_array, 10)) {
-                therapy_array.push(10);
-                document.getElementById('therapy_10').style.display = 'block';
+            if (confirmed[i].getAttribute('data-group') == 'Corynebacterium sp.') {
+                if (!contains(therapy_array, 'late_protez')) {
+                    therapy_array.push('late_protez');
+                    document.getElementById('therapy_late_protez').style.display = 'block';
+                }
+
+                if (!contains(therapy_array, 'early_protez')) {
+                    therapy_array.push('early_protez');
+                    document.getElementById('therapy_early_protez').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].getAttribute('data-group') == 'Не-HACEK Палочковидные бактерии') {
-            if (!contains(therapy_array, 11)) {
-                therapy_array.push(11);
-                document.getElementById('therapy_11').style.display = 'block';
+            if (confirmed[i].getAttribute('data-group') == 'Other') {
+                if (!contains(therapy_array, 'late_protez')) {
+                    therapy_array.push('late_protez');
+                    document.getElementById('therapy_late_protez').style.display = 'block';
+                }
+
+                if (!contains(therapy_array, 'early_protez')) {
+                    therapy_array.push('early_protez');
+                    document.getElementById('therapy_early_protez').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].getAttribute('data-subgroup') == 'Candida sp.') {
-            if (!contains(therapy_array, 'Candida')) {
-                therapy_array.push('Candida');
-                document.getElementById('therapy_Candida').style.display = 'block';
+            if (klapan == 'protez' && confirmed[i].textContent == 'Staphylococcus aureus MSSA') {
+                if (!contains(therapy_array, 'protez_MSSA')) {
+                    therapy_array.push('protez_MSSA');
+                    document.getElementById('therapy_protez_MSSA').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].getAttribute('data-subgroup') == 'Aspergillus sp.') {
-            if (!contains(therapy_array, 'Aspergillus')) {
-                therapy_array.push('Aspergillus');
-                document.getElementById('therapy_Aspergillus').style.display = 'block';
+            if (klapan == 'protez' && confirmed[i].textContent == 'Staphylococcus aureus MRSA') {
+                if (!contains(therapy_array, 'protez_MRSA')) {
+                    therapy_array.push('protez_MRSA');
+                    document.getElementById('therapy_protez_MRSA').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].textContent == 'Brucella sp.') {
-            if (!contains(therapy_array, 'Brucella')) {
-                therapy_array.push('Brucella');
-                document.getElementById('therapy_Brucella').style.display = 'block';
+            if (klapan == 'native' && local == 'right' && confirmed[i].getAttribute('data-subgroup') == 'Staphylococcus aureus') {
+                if (!contains(therapy_array, 8)) {
+                    therapy_array.push(8);
+                    document.getElementById('therapy_8').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].textContent == 'Coxiella burnetii') {
-            if (!contains(therapy_array, 'burnetii')) {
-                therapy_array.push('burnetii');
-                document.getElementById('therapy_burnetii').style.display = 'block';
+            if (confirmed[i].getAttribute('data-group') == 'Enterococcus sp.') {
+                if (!contains(therapy_array, 9)) {
+                    therapy_array.push(9);
+                    document.getElementById('therapy_9').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].textContent == 'Bartonella sp.') {
-            if (!contains(therapy_array, 'Bartonella')) {
-                therapy_array.push('Bartonella');
-                document.getElementById('therapy_Bartonella').style.display = 'block';
+            if (confirmed[i].getAttribute('data-group') == 'HACEK') {
+                if (!contains(therapy_array, 10)) {
+                    therapy_array.push(10);
+                    document.getElementById('therapy_10').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].textContent == 'Mycoplasma sp.') {
-            if (!contains(therapy_array, 'Mycoplasma')) {
-                therapy_array.push('Mycoplasma');
-                document.getElementById('therapy_Mycoplasma').style.display = 'block';
+            if (confirmed[i].getAttribute('data-group') == 'Не-HACEK Палочковидные бактерии') {
+                if (!contains(therapy_array, 11)) {
+                    therapy_array.push(11);
+                    document.getElementById('therapy_11').style.display = 'block';
+                }
             }
-        }
 
-        if (confirmed[i].textContent == 'Tropheryma whipplei') {
-            if (!contains(therapy_array, 'whipplei')) {
-                therapy_array.push('whipplei');
-                document.getElementById('therapy_whipplei').style.display = 'block';
+            if (confirmed[i].getAttribute('data-subgroup') == 'Candida sp.') {
+                if (!contains(therapy_array, 'Candida')) {
+                    therapy_array.push('Candida');
+                    document.getElementById('therapy_Candida').style.display = 'block';
+                }
             }
-        }
 
-        if (protez == 'late') {
-            if (!contains(therapy_array, 'late_protez')) {
-                therapy_array.push('late_protez');
-                document.getElementById('therapy_late_protez').style.display = 'block';
+            if (confirmed[i].getAttribute('data-subgroup') == 'Aspergillus sp.') {
+                if (!contains(therapy_array, 'Aspergillus')) {
+                    therapy_array.push('Aspergillus');
+                    document.getElementById('therapy_Aspergillus').style.display = 'block';
+                }
             }
-        }
 
-        if (protez == 'early') {
-            if (!contains(therapy_array, 'early_protez')) {
-                therapy_array.push('early_protez');
-                document.getElementById('therapy_early_protez').style.display = 'block';
+            if (confirmed[i].textContent == 'Brucella sp.') {
+                if (!contains(therapy_array, 'Brucella')) {
+                    therapy_array.push('Brucella');
+                    document.getElementById('therapy_Brucella').style.display = 'block';
+                }
+            }
+
+            if (confirmed[i].textContent == 'Coxiella burnetii') {
+                if (!contains(therapy_array, 'burnetii')) {
+                    therapy_array.push('burnetii');
+                    document.getElementById('therapy_burnetii').style.display = 'block';
+                }
+            }
+
+            if (confirmed[i].textContent == 'Bartonella sp.') {
+                if (!contains(therapy_array, 'Bartonella')) {
+                    therapy_array.push('Bartonella');
+                    document.getElementById('therapy_Bartonella').style.display = 'block';
+                }
+            }
+
+            if (confirmed[i].textContent == 'Mycoplasma sp.') {
+                if (!contains(therapy_array, 'Mycoplasma')) {
+                    therapy_array.push('Mycoplasma');
+                    document.getElementById('therapy_Mycoplasma').style.display = 'block';
+                }
+            }
+
+            if (confirmed[i].textContent == 'Tropheryma whipplei') {
+                if (!contains(therapy_array, 'whipplei')) {
+                    therapy_array.push('whipplei');
+                    document.getElementById('therapy_whipplei').style.display = 'block';
+                }
+            }
+
+            // if (protez == 'late') {
+            //     if (!contains(therapy_array, 'late_protez')) {
+            //         therapy_array.push('late_protez');
+            //         document.getElementById('therapy_late_protez').style.display = 'block';
+            //     }
+            // }
+
+            // if (protez == 'early') {
+            //     if (!contains(therapy_array, 'early_protez')) {
+            //         therapy_array.push('early_protez');
+            //         document.getElementById('therapy_early_protez').style.display = 'block';
+            //     }
+            // }
+
+            if (therapy_array.length == 0) {
+                if (!contains(therapy_array, 'default')) {
+                    therapy_array.push('default');
+                    document.getElementById('default').style.display = 'block';
+                }
             }
         }
     }
@@ -480,14 +614,7 @@ document
     .addEventListener("click", () => fadeOut(modal,500));
 
 
-function contains(arr, elem) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] === elem) {
-            return true;
-        }
-    }
-    return false;
-}
+
 
 const blood_check = document.querySelector("#blood");
 const blood = document.querySelector(".blood");
@@ -646,7 +773,12 @@ groups_item.forEach((group_item) => {
             if (this.checked) {
                 if (getComputedStyle(clinic).display == "none") {
                     fadeIn(clinic,500);
-                    fadeIn(hirurg,500);
+                }
+
+                if (getComputedStyle(hirurg).display == "none") {
+                    if (tkan_check.checked) {
+                        fadeIn(hirurg,500);
+                    }
                 }
 
                 this.parentNode.parentNode.querySelector('.clear').style.display = 'block';
@@ -677,7 +809,12 @@ groups_item.forEach((group_item) => {
             if (this.checked) {
                 if (getComputedStyle(clinic).display == "none") {
                     fadeIn(clinic,500);
-                    fadeIn(hirurg,500);
+                }
+
+                if (getComputedStyle(hirurg).display == "none") {
+                    if (tkan_check.checked) {
+                        fadeIn(hirurg,500);
+                    }
                 }
 
                 if (this.classList.contains('input_none_pathogen')) {
@@ -762,6 +899,8 @@ add_btns.forEach((btn) => {
             array_pathogen.push(new_pathogen);
             pathogens__check_clinic.append(new_pathogen_block(new_pathogen, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, this.getAttribute('data-type-input'), this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
             pathogens__check_hirurg.append(new_pathogen_block(new_pathogen, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, this.getAttribute('data-type-input'), this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+        } else {
+            update_pathogen_block(new_pathogen, this.getAttribute('data-material'),this.getAttribute('data-type'));
         }
         // parent.parentNode.append(new_pathogen_block(new_pathogen, 'clinic'));
         if (this.getAttribute('data-type-input') == 'radio') {
@@ -852,7 +991,9 @@ add_btns.forEach((btn) => {
                     if (!contains(array_pathogen, this.value)) {
                         array_pathogen.push(this.value);
                         pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+                        // if (this.getAttribute('data-material') != 'blood') {
                         pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+                        // }
                     } else {
                         update_pathogen_block(this.value, this.getAttribute('data-material'),this.getAttribute('data-type'));
                     }
