@@ -349,6 +349,18 @@ function questionnaireSubmit() {
         }
     }
 
+    for (let j = 0; j < unconfirmed.length; j++) { 
+        if (contains(confirmed, unconfirmed[j])) {
+            let index = confirmed.indexOf(unconfirmed[j]);
+            confirmed.splice(index, 1);
+        }
+    }
+
+    conclusion += '\nИтог:\n';
+    for (let i = 0; i < confirmed.length; i++) { 
+        conclusion += confirmed[i].textContent + ' ';
+    }
+
     let resultModal = document.getElementById("modal__body");
     resultModal.innerText = conclusion;
 
