@@ -76,7 +76,7 @@ function blood_confirmed_3 (pathogen) {
 }
 
 function blood_confirmed_4 (pathogen) {
-    if ((pathogen.getAttribute('data-blood-pcr') == 1) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-corresponds') == 1)) {
+    if ((pathogen.getAttribute('data-blood-pcr') == 1) && (pathogen.getAttribute('data-blood-mkbi') != 1) && (pathogen.getAttribute('data-corresponds') == 1)) {
         return 1;
     } else {
         return 0;
@@ -147,7 +147,7 @@ function tkan_confirmed (pathogen) {
 }
 
 function blood_exception_1 (pathogen) {
-    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-probs') == 1) && (pathogen.getAttribute('data-blood-pcr') == 0) && (pathogen.getAttribute('data-corresponds') == 0)) {
+    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-probs') == 1) && (pathogen.getAttribute('data-blood-pcr') != 1) && (pathogen.getAttribute('data-corresponds') == 0)) {
         return 1;
     } else {
         return 0;
@@ -155,7 +155,7 @@ function blood_exception_1 (pathogen) {
 }
 
 function blood_exception_2 (pathogen, pathogens) {
-    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-blood-pcr') == 0)) {
+    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 1) && (pathogen.getAttribute('data-blood-pcr') != 1)) {
 
         for (let i = 0; i < pathogens.length; i++) {
             if ((pathogens[i].getAttribute('data-blood-pcr') == 1)) {
@@ -169,7 +169,7 @@ function blood_exception_2 (pathogen, pathogens) {
 }
 
 function blood_exception_3 (pathogen, pathogens) {
-    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-blood-pcr') == 1)) {
+    if ((pathogen.getAttribute('data-exception') == true) && (pathogen.getAttribute('data-blood-mkbi') != 1) && (pathogen.getAttribute('data-blood-pcr') == 1)) {
         for (let i = 0; i < pathogens.length; i++) {
             if ((pathogens[i].getAttribute('data-blood-mkbi') == 1) && ((contains(typical_group_pathogens, pathogens[i].getAttribute('data-group'))) || (contains(typical_pathogens, pathogens[i].textContent)) || (contains(typical_group_pathogens, pathogens[i].textContent)))) {
                 return 1;
@@ -198,7 +198,7 @@ function blood_exception (pathogen, pathogens) {
 }
 
 function tkan_exception_1 (pathogen) {
-    if (((pathogen.getAttribute('data-blood-mkbi') == 1) || (pathogen.getAttribute('data-tkan-mkbi') == 1)) && ((pathogen.getAttribute('data-blood-pcr') == 0) || (pathogen.getAttribute('data-tkan-pcr') == 0)) && (pathogen.getAttribute('data-corresponds') == 0)) {
+    if (((pathogen.getAttribute('data-blood-mkbi') == 1) || (pathogen.getAttribute('data-tkan-mkbi') == 1)) && ((pathogen.getAttribute('data-blood-pcr') != 1) || (pathogen.getAttribute('data-tkan-pcr') != 1)) && (pathogen.getAttribute('data-corresponds') == 0)) {
         return 1;
     } else {
         return 0;
@@ -206,7 +206,7 @@ function tkan_exception_1 (pathogen) {
 }
 
 function tkan_exception_2 (pathogen, pathogens) {
-    if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-mkbi') == 1) || (pathogen.getAttribute('data-tkan-mkbi') == 1)) && (pathogen.getAttribute('data-blood-pcr') == 0) && (pathogen.getAttribute('data-tkan-pcr') == 0)) {
+    if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-mkbi') == 1) || (pathogen.getAttribute('data-tkan-mkbi') == 1)) && (pathogen.getAttribute('data-blood-pcr') != 1) && (pathogen.getAttribute('data-tkan-pcr') != 1)) {
 
         for (let i = 0; i < pathogens.length; i++) {
             if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-blood-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-pcr') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && ((contains(typical_group_pathogens, pathogens[i].getAttribute('data-group'))) || (contains(typical_pathogens, pathogens[i].textContent)) || (contains(typical_group_pathogens, pathogens[i].textContent)))) {
@@ -220,10 +220,10 @@ function tkan_exception_2 (pathogen, pathogens) {
 }
 
 function tkan_exception_3 (pathogen, pathogens) {
-    if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-pcr') == 1) || (pathogen.getAttribute('data-tkan-pcr') == 1)) && (pathogen.getAttribute('data-blood-mkbi') == 0) && (pathogen.getAttribute('data-tkan-mkbi') == 0)) {
+    if ((pathogen.getAttribute('data-exception') == true) && ((pathogen.getAttribute('data-blood-pcr') == 1) || (pathogen.getAttribute('data-tkan-pcr') == 1)) && (pathogen.getAttribute('data-blood-mkbi') != 1) && (pathogen.getAttribute('data-tkan-mkbi') != 1)) {
 
         for (let i = 0; i < pathogens.length; i++) {
-            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && (pathogens[i].getAttribute('data-blood-pcr') == 0) && (pathogens[i].getAttribute('data-tkan-pcr') == 0) && ((contains(typical_group_pathogens, pathogens[i].getAttribute('data-group'))) || (contains(typical_pathogens, pathogens[i].textContent)) || (contains(typical_group_pathogens, pathogens[i].textContent)))) {
+            if (((pathogens[i].getAttribute('data-blood-mkbi') == 1) || (pathogens[i].getAttribute('data-tkan-mkbi') == 1)) && (pathogens[i].getAttribute('data-blood-pcr') != 1) && (pathogens[i].getAttribute('data-tkan-pcr') != 1) && ((contains(typical_group_pathogens, pathogens[i].getAttribute('data-group'))) || (contains(typical_pathogens, pathogens[i].textContent)) || (contains(typical_group_pathogens, pathogens[i].textContent)))) {
                 return 1;
             }
         }
