@@ -123,7 +123,8 @@ function tkan_confirmed_4 (pathogen) {
 
     let sum = +pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-pcr');
 
-    if ((((check_mkbi) && (sum == 1) && (pathogen.getAttribute('data-probs') == 2)) || ((!check_mkbi) && (sum == 1))) && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
+    // if ((((check_mkbi) && (sum == 1) && (pathogen.getAttribute('data-probs') == 2)) || ((!check_mkbi) && (sum == 1))) && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
+    if ((((check_mkbi) && (sum == 1) && (pathogen.getAttribute('data-probs') == 2)) || ((!check_mkbi) && (sum == 1))) && (pathogen.getAttribute('data-corresponds') == 1)) {
         return 1;
     } else {
         return 0;
@@ -131,7 +132,8 @@ function tkan_confirmed_4 (pathogen) {
 }
 
 function tkan_confirmed_5 (pathogen) {
-    if ((+pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') == 1) && ((contains(typical_group_pathogens, pathogen.getAttribute('data-group'))) || (contains(typical_pathogens, pathogen.textContent)) || (contains(typical_group_pathogens, pathogen.textContent))) && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
+    // if ((+pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') == 1) && ((contains(typical_group_pathogens, pathogen.getAttribute('data-group'))) || (contains(typical_pathogens, pathogen.textContent)) || (contains(typical_group_pathogens, pathogen.textContent))) && (pathogen.getAttribute('data-corresponds') == 1) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 1)) {
+    if ((+pathogen.getAttribute('data-blood-pcr') + +pathogen.getAttribute('data-blood-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') + +pathogen.getAttribute('data-tkan-mkbi') == 1) && ((contains(typical_group_pathogens, pathogen.getAttribute('data-group'))) || (contains(typical_pathogens, pathogen.textContent)) || (contains(typical_group_pathogens, pathogen.textContent))) && (pathogen.getAttribute('data-corresponds') == 1)) {
         return 1;
     } else {
         return 0;
@@ -234,7 +236,8 @@ function tkan_exception_3 (pathogen, pathogens) {
 }
 
 function tkan_exception_4 (pathogen) {
-    if ((pathogen.getAttribute('data-corresponds') == 0) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 0)) {
+    if ((pathogen.getAttribute('data-corresponds') == 0)) {
+        // if ((pathogen.getAttribute('data-corresponds') == 0) && (document.getElementById(pathogen.textContent +' hirurg').getAttribute('data-corresponds') == 0)) {
         return 1;
     } else {
         return 0;
@@ -454,9 +457,9 @@ function questionnaireSubmit() {
             }
 
             if (confirmed[i].getAttribute('data-group') == 'Диплококки') {
-                if (!contains(therapy_array, 'late_protez')) {
-                    therapy_array.push('late_protez');
-                    document.getElementById('therapy_late_protez').style.display = 'block';
+                if (!contains(therapy_array, 11)) {
+                    therapy_array.push(11);
+                    document.getElementById('therapy_11').style.display = 'block';
                 }
 
                 if (!contains(therapy_array, 'early_protez')) {
@@ -466,9 +469,9 @@ function questionnaireSubmit() {
             }
 
             if (confirmed[i].getAttribute('data-group') == 'Corynebacterium sp.') {
-                if (!contains(therapy_array, 'late_protez')) {
-                    therapy_array.push('late_protez');
-                    document.getElementById('therapy_late_protez').style.display = 'block';
+                if (!contains(therapy_array, 11)) {
+                    therapy_array.push(11);
+                    document.getElementById('therapy_11').style.display = 'block';
                 }
 
                 if (!contains(therapy_array, 'early_protez')) {
@@ -566,7 +569,7 @@ function questionnaireSubmit() {
                 }
             }
 
-            if (confirmed[i].textContent == 'Mycoplasma sp.') {
+            if (confirmed[i].textContent == 'Mycoplasma sp.' || confirmed[i].textContent == 'Chlamydophila sp.') {
                 if (!contains(therapy_array, 'Mycoplasma')) {
                     therapy_array.push('Mycoplasma');
                     document.getElementById('therapy_Mycoplasma').style.display = 'block';
@@ -577,6 +580,13 @@ function questionnaireSubmit() {
                 if (!contains(therapy_array, 'whipplei')) {
                     therapy_array.push('whipplei');
                     document.getElementById('therapy_whipplei').style.display = 'block';
+                }
+            }
+
+            if (confirmed[i].textContent == 'Rickettsia sp.') {
+                if (!contains(therapy_array, 'etio')) {
+                    therapy_array.push('etio');
+                    document.getElementById('etio').style.display = 'block';
                 }
             }
 
@@ -653,7 +663,31 @@ tkan_check.addEventListener('change', function () {
 const pathogens__check_clinic = document.querySelector(".pathogens__check_clinic");
 const pathogens__check_hirurg = document.querySelector(".pathogens__check_hirurg");
 const clinic = document.querySelector(".clinic");
-const hirurg = document.querySelector(".hirurg");
+// const hirurg = document.querySelector(".hirurg");
+
+document.querySelector('#tkan').addEventListener('change', function () {
+    if (this.checked) {
+        if (document.querySelector('#blood').checked) {
+            clinic.querySelector('.questionnaire__title').textContent = 'КЛИНИЧЕСКАЯ/ХИРУРГИЧЕСКАЯ КАРТИНА';
+        } else {
+            clinic.querySelector('.questionnaire__title').textContent = 'ХИРУРГИЧЕСКАЯ КАРТИНА';
+        }
+    } else {
+        clinic.querySelector('.questionnaire__title').textContent = 'КЛИНИЧЕСКАЯ КАРТИНА';
+    }
+});
+
+document.querySelector('#blood').addEventListener('change', function () {
+    if (this.checked) {
+        if (document.querySelector('#tkan').checked) {
+            clinic.querySelector('.questionnaire__title').textContent = 'КЛИНИЧЕСКАЯ/ХИРУРГИЧЕСКАЯ КАРТИНА';
+        } else {
+            clinic.querySelector('.questionnaire__title').textContent = 'КЛИНИЧЕСКАЯ КАРТИНА';
+        }
+    } else {
+        clinic.querySelector('.questionnaire__title').textContent = 'ХИРУРГИЧЕСКАЯ КАРТИНА';
+    }
+});
 
 let array_pathogen = [];
 
@@ -676,29 +710,37 @@ function checkboxes_clear (checkboxes) {
 
 function update_pathogen_block(update_element_value, data_attr_material, data_attr_type) {
     update_element_clinic = document.getElementById(update_element_value + ' ' + 'clinic');
-    update_element_hirurg = document.getElementById(update_element_value + ' ' + 'hirurg');
+    // update_element_hirurg = document.getElementById(update_element_value + ' ' + 'hirurg');
     update_element_clinic.setAttribute('data-'+data_attr_material, 1);
-    update_element_hirurg.setAttribute('data-'+data_attr_material, 1);
+    // update_element_hirurg.setAttribute('data-'+data_attr_material, 1);
     update_element_clinic.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 1);
-    update_element_hirurg.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 1);
+    // update_element_hirurg.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 1);
 }
 
 function del_pathogen_block(update_element_value, data_attr_material, data_attr_type, what_update) {
     update_element_clinic = document.getElementById(update_element_value + ' ' + 'clinic');
-    update_element_hirurg = document.getElementById(update_element_value + ' ' + 'hirurg');
+    // update_element_hirurg = document.getElementById(update_element_value + ' ' + 'hirurg');
 
     if (what_update == 'material') {
         update_element_clinic.setAttribute('data-'+data_attr_material, 0);
-        update_element_hirurg.setAttribute('data-'+data_attr_material, 0);
+        // update_element_hirurg.setAttribute('data-'+data_attr_material, 0);
     } else {
         update_element_clinic.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 0);
-        update_element_hirurg.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 0);
+        // update_element_hirurg.setAttribute('data-'+data_attr_material+'-'+data_attr_type, 0);
     }
 
 }
 
 const clears = document.querySelectorAll('.clear');
 clears.forEach((clear) => {
+    clear.addEventListener('mouseover', function() {
+        this.querySelector('img').src = 'img/trash_hover.svg';
+    });
+
+    clear.addEventListener('mouseout', function() {
+        this.querySelector('img').src = 'img/trash.svg';
+    });
+
     clear.addEventListener('click', function() {
         let input_value, material, type;
         clear.parentNode.querySelectorAll('input').forEach((input) => {
@@ -722,10 +764,10 @@ clears.forEach((clear) => {
             del_pathogen_block(input_value, material, type, 'type');
         }
 
-        let checkboxes_named = document.querySelectorAll('input[type="checkbox"][value="' + input_value + '"]');
+        let checkboxes_named = document.querySelectorAll('input[value="' + input_value + '"]');
         if (!checkboxes_check(checkboxes_named)) {
             document.getElementById(input_value + ' clinic').remove();
-            document.getElementById(input_value + ' hirurg').remove();
+            // document.getElementById(input_value + ' hirurg').remove();
             array_pathogen.splice(array_pathogen.indexOf(input_value), 1);
         }
 
@@ -787,11 +829,11 @@ groups_item.forEach((group_item) => {
                     fadeIn(clinic,500);
                 }
 
-                if (getComputedStyle(hirurg).display == "none") {
-                    if (tkan_check.checked) {
-                        fadeIn(hirurg,500);
-                    }
-                }
+                // if (getComputedStyle(hirurg).display == "none") {
+                //     if (tkan_check.checked) {
+                //         fadeIn(hirurg,500);
+                //     }
+                // }
 
                 this.parentNode.parentNode.querySelector('.clear').style.display = 'block';
 
@@ -802,10 +844,10 @@ groups_item.forEach((group_item) => {
                 if (!contains(array_pathogen, this.value)) {
                     array_pathogen.push(this.value);
                     pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception')));
-                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception')));
+                    // pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception')));
                 } else {
                     document.getElementById(this.value + ' ' + 'clinic').setAttribute('data-probs', this.getAttribute('data-probs'));
-                    document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
+                    // document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
                     update_pathogen_block(this.value, this.getAttribute('data-material'),this.getAttribute('data-type'));
                 }
             }
@@ -823,11 +865,13 @@ groups_item.forEach((group_item) => {
                     fadeIn(clinic,500);
                 }
 
-                if (getComputedStyle(hirurg).display == "none") {
-                    if (tkan_check.checked) {
-                        fadeIn(hirurg,500);
-                    }
-                }
+                // if (getComputedStyle(hirurg).display == "none") {
+                //     if (tkan_check.checked) {
+                //         fadeIn(hirurg,500);
+                //     }
+                // }
+
+                this.parentNode.parentNode.querySelector('.clear').style.display = 'block';
 
                 if (this.classList.contains('input_none_pathogen')) {
                     return 0;
@@ -836,12 +880,14 @@ groups_item.forEach((group_item) => {
                 if (!contains(array_pathogen, this.value)) {
                     array_pathogen.push(this.value);
                     pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception')));
-                    pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception')));
+                    // pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception')));
                 } else {
                     update_pathogen_block(this.value, this.getAttribute('data-material'),this.getAttribute('data-type'));
                 }
                 
             } else {
+
+                this.parentNode.parentNode.querySelector('.clear').style.display = 'none';
 
                 if (this.classList.contains('input_none_pathogen')) {
                     return 0;
@@ -859,7 +905,7 @@ groups_item.forEach((group_item) => {
                 if (!checkboxes_check(checkboxes_named)) {
                     array_pathogen.splice(array_pathogen.indexOf(checkbox.value), 1);
                     document.getElementById(this.value + ' clinic').remove();
-                    document.getElementById(this.value + ' hirurg').remove();
+                    // document.getElementById(this.value + ' hirurg').remove();
                 }
             }
         });
@@ -900,7 +946,7 @@ add_btns.forEach((btn) => {
 
         if (getComputedStyle(clinic).display == "none") {
             fadeIn(clinic,500);
-            fadeIn(hirurg,500);
+            // fadeIn(hirurg,500);
         }
 
         parent = btn.parentNode;
@@ -910,7 +956,7 @@ add_btns.forEach((btn) => {
         if (!contains(array_pathogen, new_pathogen)) {
             array_pathogen.push(new_pathogen);
             pathogens__check_clinic.append(new_pathogen_block(new_pathogen, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, this.getAttribute('data-type-input'), this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
-            pathogens__check_hirurg.append(new_pathogen_block(new_pathogen, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, this.getAttribute('data-type-input'), this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+            // pathogens__check_hirurg.append(new_pathogen_block(new_pathogen, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, this.getAttribute('data-type-input'), this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
         } else {
             update_pathogen_block(new_pathogen, this.getAttribute('data-material'),this.getAttribute('data-type'));
         }
@@ -921,6 +967,16 @@ add_btns.forEach((btn) => {
             let new_inputs = new_lvl.querySelectorAll('input');
             let type = new_lvl.querySelector('.types');
             let new_clear = new_lvl.querySelector('.clear');
+
+            new_clear.style.display = 'block';
+
+            new_clear.addEventListener('mouseover', function() {
+                this.querySelector('img').src = 'img/trash_hover.svg';
+            });
+        
+            new_clear.addEventListener('mouseout', function() {
+                this.querySelector('img').src = 'img/trash.svg';
+            });
 
             new_clear.addEventListener('click', function() {
                 let input_value;
@@ -941,12 +997,14 @@ add_btns.forEach((btn) => {
                     del_pathogen_block(input_value, material, type, 'type');
                 }
 
-                let checkboxes_named = document.querySelectorAll('input[type="checkbox"][value="' + input_value + '"]');
+                let checkboxes_named = document.querySelectorAll('input[value="' + input_value + '"]');
                 if (!checkboxes_check(checkboxes_named)) {
                     document.getElementById(input_value + ' clinic').remove();
-                    document.getElementById(input_value + ' hirurg').remove();
+                    // document.getElementById(input_value + ' hirurg').remove();
                     array_pathogen.splice(array_pathogen.indexOf(input_value), 1);
                 }
+
+                this.style.display = 'none';
             });
 
             new_inputs.forEach((new_input) => {
@@ -960,18 +1018,21 @@ add_btns.forEach((btn) => {
 
                 new_input.addEventListener('change', function () {
                     if (this.checked) {
+
+                        new_clear.style.display = 'block';
+
                         if (getComputedStyle(clinic).display == "none") {
                             fadeIn(clinic,500);
-                            fadeIn(hirurg,500);
+                            // fadeIn(hirurg,500);
                         }
 
                         if (!contains(array_pathogen, this.value)) {
                             array_pathogen.push(this.value);
                             pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
-                            pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+                            // pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), this.getAttribute('data-probs'), 'radio', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
                         } else {
                             document.getElementById(this.value + ' ' + 'clinic').setAttribute('data-probs', this.getAttribute('data-probs'));
-                            document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
+                            // document.getElementById(this.value + ' ' + 'hirurg').setAttribute('data-probs', this.getAttribute('data-probs'));
                         }
                     }
                 });
@@ -987,6 +1048,48 @@ add_btns.forEach((btn) => {
             let new_lvl = lvl.cloneNode(true);
             let new_input = new_lvl.querySelector('input');
             let type = new_lvl.querySelector('.types');
+            let new_clear = new_lvl.querySelector('.clear');
+
+            new_clear.style.display = 'block';
+
+            new_clear.addEventListener('mouseover', function() {
+                this.querySelector('img').src = 'img/trash_hover.svg';
+            });
+        
+            new_clear.addEventListener('mouseout', function() {
+                this.querySelector('img').src = 'img/trash.svg';
+            });
+
+            new_clear.addEventListener('click', function() {
+                let input_value;
+                new_clear.parentNode.querySelectorAll('input').forEach((input) => {
+                    input.checked = false;
+                    input_value = input.value;
+                    material = input.getAttribute('data-material');
+                    type = input.getAttribute('data-type');
+                });
+
+                let data_material_check = document.querySelectorAll('input[data-material="' + material + '"][value="' + input_value + '"]');
+                if (!checkboxes_check(data_material_check)) {
+                    del_pathogen_block(input_value, material, type, 'material');
+                }
+        
+                let data_type_check = document.querySelectorAll('input[data-type="' + type + '"][value="' + input_value + '"]');
+                if (!checkboxes_check(data_type_check)) {
+                    del_pathogen_block(input_value, material, type, 'type');
+                }
+
+                let checkboxes_named = document.querySelectorAll('input[value="' + input_value + '"]');
+                if (!checkboxes_check(checkboxes_named)) {
+                    document.getElementById(input_value + ' clinic').remove();
+                    // document.getElementById(input_value + ' hirurg').remove();
+                    array_pathogen.splice(array_pathogen.indexOf(input_value), 1);
+                }
+
+                this.style.display = 'none';
+
+            });
+
             new_input.value = new_pathogen;
             new_input.checked = true;
             new_input.setAttribute('data-material', this.getAttribute('data-material'));
@@ -1000,17 +1103,21 @@ add_btns.forEach((btn) => {
             new_input.addEventListener('change', function () {
                 //если отмечаем чекбокс, то открываем блоки клиническую и хирургичекую картин, создаем элемент со значением чекбокса и помещаем этот элемент в эти блоки
                 if (this.checked) {
+                    new_clear.style.display = 'block';
+
                     if (!contains(array_pathogen, this.value)) {
                         array_pathogen.push(this.value);
                         pathogens__check_clinic.append(new_pathogen_block(this.value, 'clinic', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
                         // if (this.getAttribute('data-material') != 'blood') {
-                        pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
+                        // pathogens__check_hirurg.append(new_pathogen_block(this.value, 'hirurg', this.getAttribute('data-material'), this.getAttribute('data-type'), this.getAttribute('data-group'), this.getAttribute('data-subgroup'), 1, 'checkbox', this.getAttribute('data-exception'), this.getAttribute('data-non-typical')));
                         // }
                     } else {
                         update_pathogen_block(this.value, this.getAttribute('data-material'),this.getAttribute('data-type'));
                     }
                     
                 } else {
+                    this.parentNode.parentNode.querySelector('.clear').style.display = 'none';
+
                     let data_material_check = document.querySelectorAll('input[data-material="' + this.getAttribute('data-material') + '"][value="' + this.value + '"]');
                     del_pathogen_block(this.value, this.getAttribute('data-material'), this.getAttribute('data-type'), 'type');
 
@@ -1023,7 +1130,7 @@ add_btns.forEach((btn) => {
                     if (!checkboxes_check(checkboxes_named)) {
                         array_pathogen.splice(array_pathogen.indexOf(new_input.value), 1);
                         document.getElementById(this.value + ' clinic').remove();
-                        document.getElementById(this.value + ' hirurg').remove();
+                        // document.getElementById(this.value + ' hirurg').remove();
                         // checkboxes_clear(checkboxes_named);
                     }
                 }
@@ -1041,14 +1148,16 @@ function findAncestor (el, cls) {
     return el;
 }
 
-document.querySelector('.clear_none_pathogen').addEventListener('click', function () {
-    let parent = findAncestor(this, 'pathogens__wrapper');
-    parent.querySelectorAll('input').forEach((inp) => {
-        if (!inp.classList.contains('input_none_pathogen')){
-            inp.disabled = false;
-        }
+document.querySelectorAll('.clear_none_pathogen').forEach((clear_el) => {
+    clear_el.addEventListener('click', function () {
+        let parent = findAncestor(this, 'pathogens__wrapper');
+        parent.querySelectorAll('input').forEach((inp) => {
+            if (!inp.classList.contains('input_none_pathogen')){
+                inp.disabled = false;
+            }
+        });
+        this.style.display = 'none';
     });
-    this.style.display = 'none';
 });
 
 none_pathogens.forEach((none_pathogen) => {

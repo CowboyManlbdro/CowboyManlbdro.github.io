@@ -823,11 +823,11 @@ input[type='checkbox'] {
 }
 
 .modal-content_therapy {
-    height: 900px;
+    max-height: 90vh;
 }
 
 .modal__body_therapy {
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .therapy_display {
