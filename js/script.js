@@ -461,22 +461,12 @@ function questionnaireSubmit() {
                     therapy_array.push(11);
                     document.getElementById('therapy_11').style.display = 'block';
                 }
-
-                if (!contains(therapy_array, 'early_protez')) {
-                    therapy_array.push('early_protez');
-                    document.getElementById('therapy_early_protez').style.display = 'block';
-                }
             }
 
             if (confirmed[i].getAttribute('data-group') == 'Corynebacterium sp.') {
                 if (!contains(therapy_array, 11)) {
                     therapy_array.push(11);
                     document.getElementById('therapy_11').style.display = 'block';
-                }
-
-                if (!contains(therapy_array, 'early_protez')) {
-                    therapy_array.push('early_protez');
-                    document.getElementById('therapy_early_protez').style.display = 'block';
                 }
             }
 
@@ -569,10 +559,17 @@ function questionnaireSubmit() {
                 }
             }
 
-            if (confirmed[i].textContent == 'Mycoplasma sp.' || confirmed[i].textContent == 'Chlamydophila sp.') {
+            if (confirmed[i].textContent == 'Mycoplasma sp.') {
                 if (!contains(therapy_array, 'Mycoplasma')) {
                     therapy_array.push('Mycoplasma');
                     document.getElementById('therapy_Mycoplasma').style.display = 'block';
+                }
+            }
+
+            if (confirmed[i].textContent == 'Chlamydophila sp.') {
+                if (!contains(therapy_array, 'Chlamydophila')) {
+                    therapy_array.push('Chlamydophila');
+                    document.getElementById('therapy_Chlamydophila').style.display = 'block';
                 }
             }
 
